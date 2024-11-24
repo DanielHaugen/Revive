@@ -21,3 +21,13 @@ model Instance {
   status    String
   createdAt DateTime @default(now())
 }
+
+model User {
+  id        Int      @id @default(autoincrement()) // User ID
+  email     String   @unique
+  password  String   // Store hashed password here
+  firstName String?
+  lastName  String?
+  createdAt DateTime @default(now()) // Auto-generated timestamp
+  updatedAt DateTime @updatedAt     // Auto-update timestamp
+}

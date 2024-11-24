@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import PrimaryButton from '@/components/ui/buttons/PrimaryButton'; // Importing the reusable button component
+import PrimaryButton from '@/ui/buttons/PrimaryButton'; // Importing the reusable button component
 
 // Define the type for the instance data
 type InstanceData = {

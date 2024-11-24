@@ -1,9 +1,9 @@
 'use client';
 
-import PrimaryButton from '@/components/ui/buttons/PrimaryButton';
-import StatusChip from '@/components/ui/chips/StatusChips';
-import ConfirmationModal from '@/components/ui/modals/ConfirmationModal';
-import DataTable from '@/components/ui/tables/DataTable';
+import PrimaryButton from '@/ui/buttons/PrimaryButton';
+import StatusChip from '@/ui/chips/StatusChips';
+import ConfirmationModal from '@/ui/modals/ConfirmationModal';
+import DataTable from '@/ui/tables/DataTable';
 import { Instance } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

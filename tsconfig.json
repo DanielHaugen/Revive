@@ -21,8 +21,7 @@
     "paths": {
       "@/*": ["./*"],
       "@/lib/*": ["lib/*"],
-      "@/components/*": ["./components/*"],
-      "@/ui/*": ["components/ui/*"],
+      "@/ui/*": ["lib/ui/*"],
       "@/pages/*": ["./pages/*"]
     }
   },
