@@ -7,6 +7,7 @@ import DataTable from '@/ui/tables/DataTable';
 import { Instance } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { FaFilter } from 'react-icons/fa6';
 
 // Define the EC2Instance type
 type EC2Instance = {
@@ -124,7 +125,14 @@ const InstancesPage = () => {
 
   return (
     <div className="container mx-auto py-4">
-      <h1 className="text-2xl font-semibold mb-4">EC2 Instances</h1>
+      <div className="flex mb-4">
+        <h1 className="text-2xl font-semibold">EC2 Instances</h1>
+        <PrimaryButton onClick={() => {}} className="ml-auto">
+          <div className="flex items-center">
+            Filter <FaFilter className="ml-3" />
+          </div>
+        </PrimaryButton>
+      </div>
       {/* Pass the instances and columns to the DataTable component */}
       <DataTable
         data={instances}
