@@ -1,31 +1,30 @@
-import { PrismaClient } from '@prisma/client';
+import { NextResponse } from 'next/server';
+import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 
-const prisma = new PrismaClient();
+// Set up the EC2 client using system AWS profile credentials
+const ec2Client = new EC2Client({
+  region: process.env.AWS_REGION || 'us-east-1',
+});
 
 export async function GET() {
   try {
-    // Fetch EC2 instances from the database
-    const instances = await prisma.instance.findMany();
+    // Fetch the list of instances
+    const command = new DescribeInstancesCommand({});
+    const response = await ec2Client.send(command);
+
+    // Extract instances from the response
+    const instances =
+      response.Reservations?.flatMap(
+        (reservation) => reservation.Instances || []
+      ) || [];
 
     // Return the instances as a JSON response
-    return new Response(JSON.stringify(instances), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return NextResponse.json(instances);
   } catch (error) {
-    console.error('Error fetching instances:', error);
-
-    // Return an error response
-    return new Response(JSON.stringify({ error: 'Error fetching instances' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } finally {
-    // Close the Prisma client connection to avoid connection leaks
-    await prisma.$disconnect();
+    console.error('Error fetching EC2 instances:', error);
+    return NextResponse.json(
+      { error: 'Error fetching EC2 instances' },
+      { status: 500 }
+    );
   }
 }

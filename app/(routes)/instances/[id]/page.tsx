@@ -4,19 +4,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import PrimaryButton from '@/ui/buttons/PrimaryButton'; // Importing the reusable button component
-
-// Define the type for the instance data
-type InstanceData = {
-  id: string;
-  name: string;
-  type: string;
-  status: string;
-  createdAt: string;
-};
+import { Instance } from '@aws-sdk/client-ec2';
 
 const InstanceDetailsPage = () => {
   const { id } = useParams();
-  const [instance, setInstance] = useState<InstanceData | null>(null);
+  const [instance, setInstance] = useState<Instance | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +19,7 @@ const InstanceDetailsPage = () => {
         const response = await fetch(`/api/instances/${id}`);
         if (!response.ok) throw new Error('Failed to fetch instance data');
 
-        const data: InstanceData = await response.json();
+        const data: Instance = await response.json();
         setInstance(data);
       } catch (error) {
         console.error('Error fetching instance:', error);
@@ -48,28 +40,32 @@ const InstanceDetailsPage = () => {
   }
 
   return (
-    <div className="p-8 bg-white shadow-lg rounded-lg max-w-4xl mx-auto mt-10">
+    <div className="p-8 bg-white shadow-lg rounded-lg w-full mx-auto mt-10">
       <h1 className="text-3xl font-bold mb-4">Instance Details</h1>
       <div className="space-y-4">
         <div className="flex justify-between">
           <span className="font-semibold">ID:</span>
-          <span>{instance.id}</span>
+          <span>{instance.InstanceId}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-semibold">Name:</span>
-          <span>{instance.name}</span>
+          <span>{instance.Tags?.find((tag) => tag.Key === 'Name')?.Value}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-semibold">Type:</span>
-          <span>{instance.type}</span>
+          <span>{instance.PlatformDetails}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-semibold">Status:</span>
-          <span className="capitalize">{instance.status}</span>
+          <span className="capitalize">{instance.State?.Name}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-semibold">Created At:</span>
-          <span>{new Date(instance.createdAt).toLocaleDateString()}</span>
+          <span>
+            {instance.LaunchTime
+              ? new Date(instance.LaunchTime).toLocaleDateString()
+              : 'Unknown'}
+          </span>
         </div>
       </div>
 

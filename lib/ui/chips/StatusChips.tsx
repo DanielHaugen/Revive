@@ -2,8 +2,15 @@
 
 import React from 'react';
 
+export type EC2Status =
+  | 'running'
+  | 'stopped'
+  | 'stopping'
+  | 'terminated'
+  | 'pending';
+
 type StatusChipProps = {
-  status: 'running' | 'stopped' | 'terminated' | 'pending';
+  status: EC2Status | string;
 };
 
 const StatusChip: React.FC<StatusChipProps> = ({ status }) => {
@@ -13,14 +20,13 @@ const StatusChip: React.FC<StatusChipProps> = ({ status }) => {
     case 'running':
       statusColor = 'bg-green-500';
       break;
-    case 'stopped':
+    case 'stopping':
+    case 'pending':
       statusColor = 'bg-yellow-500';
       break;
     case 'terminated':
+    case 'stopped':
       statusColor = 'bg-red-500';
-      break;
-    case 'pending':
-      statusColor = 'bg-blue-500';
       break;
     default:
       statusColor = 'bg-gray-500';
@@ -30,7 +36,8 @@ const StatusChip: React.FC<StatusChipProps> = ({ status }) => {
     <span
       className={`${statusColor} text-white py-1 px-3 rounded-full text-sm font-medium`}
     >
-      {status}
+      {/* Display the status in title case */}
+      {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
 };

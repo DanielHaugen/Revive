@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'; // If using Next.js
+
+export type Column<T> = {
+  header: string;
+  accessor: keyof T | ((item: T) => React.ReactNode); // Allow function-based accessors
+  render?: (
+    value: T[keyof T] | React.ReactNode,
+    row: T
+  ) => React.ReactNode | Promise<React.ReactNode>; // Optionally pass the whole item to render
+};
 
 type DataTableProps<T> = {
   data: T[];
-  columns: {
-    header: string;
-    accessor: keyof T;
-    render?: (value: T[keyof T]) => React.ReactNode;
-  }[];
-  onRowClick?: (rowData: T) => void; // New prop for row click handling
+  columns: Column<T>[];
+  onRowClick?: (rowData: T, e: React.MouseEvent) => void; // New prop for row click handling
 };
 
 function DataTable<T>({ data, columns, onRowClick }: DataTableProps<T>) {
@@ -16,7 +21,7 @@ function DataTable<T>({ data, columns, onRowClick }: DataTableProps<T>) {
     key: keyof T;
     direction: 'ascending' | 'descending';
   }>({
-    key: columns[0]?.accessor,
+    key: columns[0]?.accessor as keyof T,
     direction: 'ascending',
   });
 
@@ -55,7 +60,7 @@ function DataTable<T>({ data, columns, onRowClick }: DataTableProps<T>) {
               <th
                 key={String(column.accessor)}
                 className="px-4 py-2 text-left cursor-pointer hover:bg-gray-200"
-                onClick={() => handleSort(column.accessor)}
+                onClick={() => handleSort(column.accessor as keyof T)}
               >
                 <div className="flex items-center justify-between">
                   {column.header}
@@ -74,15 +79,37 @@ function DataTable<T>({ data, columns, onRowClick }: DataTableProps<T>) {
             <tr
               key={rowIndex}
               className="border-t hover:bg-gray-50 cursor-pointer" // Indicate clickability
-              onClick={() => onRowClick && onRowClick(row)} // Handle row click
+              onClick={(e) => onRowClick && onRowClick(row, e)} // Handle row click
             >
               {columns.map((column) => {
-                const cellValue = row[column.accessor];
+                const cellValue =
+                  typeof column.accessor === 'function'
+                    ? column.accessor(row)
+                    : row[column.accessor];
+
+                const renderValue = column.render
+                  ? column.render(cellValue, row)
+                  : renderDefault(cellValue);
+
+                // If the render value is a promise, resolve it
+                if (renderValue instanceof Promise) {
+                  const [resolvedValue, setResolvedValue] =
+                    useState<React.ReactNode | null>(null);
+
+                  useEffect(() => {
+                    renderValue.then((resolved) => setResolvedValue(resolved));
+                  }, [renderValue]);
+
+                  return (
+                    <td key={String(column.header)} className="px-4 py-2">
+                      {resolvedValue}
+                    </td>
+                  );
+                }
+
                 return (
-                  <td key={String(column.accessor)} className="px-4 py-2">
-                    {column.render
-                      ? column.render(cellValue)
-                      : renderDefault(cellValue)}
+                  <td key={String(column.header)} className="px-4 py-2">
+                    {renderValue}
                   </td>
                 );
               })}
