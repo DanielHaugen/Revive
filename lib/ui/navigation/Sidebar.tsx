@@ -40,8 +40,8 @@ export default function Sidebar() {
       section: 'Virtual Machines',
       links: [
         { href: '/instances', label: 'EC2 Instances', icon: FaMicrochip },
-        { href: '/snapshots', label: 'Snapshots', icon: FaImage },
         { href: '/volumes', label: 'Volumes', icon: FaRegHardDrive },
+        { href: '/snapshots', label: 'Snapshots', icon: FaImage },
         { href: '/restoration', label: 'Restoration', icon: FaRegClone },
       ],
     },

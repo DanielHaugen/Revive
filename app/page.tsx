@@ -1,13 +1,9 @@
 'use client';
 
+import { Instance } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
-// Define types for instances and snapshots
-type EC2Instance = {
-  id: string;
-  status: string;
-};
+import { FaMicrochip } from 'react-icons/fa6';
 
 type Snapshot = {
   SnapshotId: string;
@@ -15,7 +11,7 @@ type Snapshot = {
 };
 
 export default function Home() {
-  const [instances, setInstances] = useState<EC2Instance[]>([]);
+  const [instances, setInstances] = useState<Instance[]>([]);
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,7 +41,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-6">ReVive Dashboard</h1>
+      <h1 className="text-4xl font-bold mb-6">Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Instances Overview */}
@@ -56,10 +52,18 @@ export default function Home() {
           ) : (
             <ul>
               {instances.slice(0, 5).map((instance) => (
-                <li key={instance.id} className="border-b py-2">
-                  <Link href={`/instances/${instance.id}`}>
-                    <span className="text-blue-500 cursor-pointer">
-                      {instance.id} - {instance.status}
+                <li key={instance.InstanceId} className="border-b py-2">
+                  <Link href={`/instances/${instance.InstanceId}`}>
+                    {/* Put all on one line */}
+                    <span className="flex items-center text-blue-500">
+                      <FaMicrochip className="mr-2" />
+                      <span className="font-semibold">
+                        {
+                          instance.Tags?.find((tag) => tag.Key === 'Name')
+                            ?.Value
+                        }{' '}
+                        - {instance.State?.Name}
+                      </span>
                     </span>
                   </Link>
                 </li>

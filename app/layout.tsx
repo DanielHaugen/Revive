@@ -1,17 +1,18 @@
 // app/layout.tsx
 import './globals.css'; // Import global styles
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { Inter } from 'next/font/google';
 import Sidebar from '@/lib/ui/navigation/Sidebar';
 import Navbar from '@/lib/ui/navigation/Navbar';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const inter = Inter({ subsets: ['latin'] }); // Optional: Use Google Fonts
 
 // Metadata for SEO
 export const metadata: Metadata = {
-  title: 'ReVive - Cloud Administration Tool',
-  description: 'Manage your AWS EC2 instances and snapshots with ReVive.',
+  title: 'Revive - Cloud Administration Tool',
+  description: 'Manage your AWS EC2 instances and snapshots with Revive.',
 };
 
 export default function RootLayout({
@@ -33,6 +34,8 @@ export default function RootLayout({
           <main className="container mx-auto p-6 flex flex-col flex-grow">
             {children}
           </main>
+
+          <ToastContainer position="bottom-right" />
         </div>
       </body>
     </html>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -33,7 +34,9 @@ export default function LoginPage() {
       document.cookie = `token=${token}; path=/; Secure; SameSite=Strict`;
 
       router.push('/'); // Redirect to home or dashboard
+      toast.success('Successfully logged in!');
     } catch (err) {
+      toast.error(`${err}`);
       setError((err as Error).message);
     }
   };
