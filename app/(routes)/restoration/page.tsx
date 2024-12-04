@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import SearchDropdown from '@/ui/inputs/SearchableDropdown';
-import PrimaryButton from '@/ui/buttons/PrimaryButton';
+import Button from '@/ui/buttons/Button';
 import { FaRotateRight } from 'react-icons/fa6';
 import { Instance, Snapshot } from '@aws-sdk/client-ec2';
 import { toast } from 'react-toastify';
@@ -115,8 +115,8 @@ const RestorationPage = () => {
                   } (${InstanceId}) [${PrivateIpAddress}]`,
                 })
               )}
-              onChange={(value) => {
-                setSelectedInstance(value);
+              onChange={(option) => {
+                setSelectedInstance(option.value);
                 setSnapshots([]); // Reset snapshots on instance change
                 setSelectedSnapshot(null);
               }}
@@ -133,14 +133,14 @@ const RestorationPage = () => {
                   value: SnapshotId ?? '',
                   label: `${SnapshotId} - Taken on ${CompletionTime}`,
                 }))}
-                onChange={(value) => setSelectedSnapshot(value)}
+                onChange={(option) => setSelectedSnapshot(option.value)}
                 placeholder="Select a snapshot..."
               />
             </div>
           )}
 
           {/* Restore Button */}
-          <PrimaryButton
+          <Button
             onClick={handleRestore}
             disabled={!selectedInstance || !selectedSnapshot || isRestoring}
             className="flex items-center justify-center"
@@ -153,7 +153,7 @@ const RestorationPage = () => {
               <FaRotateRight className="mr-2 transition duration-300 ease-in-out transform hover:rotate-180" />
             )}
             {isRestoring ? 'Restoring...' : 'Restore Instance'}
-          </PrimaryButton>
+          </Button>
         </div>
 
         {/* Progress Output */}

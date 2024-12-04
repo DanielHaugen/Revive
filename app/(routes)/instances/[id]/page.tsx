@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import PrimaryButton from '@/ui/buttons/PrimaryButton'; // Importing the reusable button component
+import Button from '@/ui/buttons/Button'; // Importing the reusable button component
 import { Instance } from '@aws-sdk/client-ec2';
 
 const InstanceDetailsPage = () => {
@@ -70,9 +70,7 @@ const InstanceDetailsPage = () => {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <PrimaryButton onClick={() => alert('Taking action!')}>
-          Manage Instance
-        </PrimaryButton>
+        <Button onClick={() => alert('Taking action!')}>Manage Instance</Button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import PrimaryButton from '@/ui/buttons/PrimaryButton';
+import Button from '@/ui/buttons/Button';
 import StatusChip, { EC2Status } from '@/ui/chips/StatusChips';
 import DataTable, { Column } from '@/ui/tables/DataTable';
 import { Instance } from '@aws-sdk/client-ec2';
@@ -112,7 +112,7 @@ const InstancesPage = () => {
           instance.State?.Name === 'stopping';
         return (
           <div className="flex gap-2">
-            <PrimaryButton
+            <Button
               onClick={showStartButton ? handleStart : handleStop}
               ariaLabel={`${showStartButton ? 'Start' : 'Stop'} Instance`}
               className="flex items-center justify-center"
@@ -120,7 +120,7 @@ const InstancesPage = () => {
             >
               <FaPowerOff className="text-white-600 mr-2" />
               {showStartButton ? 'Start' : 'Stop'}
-            </PrimaryButton>
+            </Button>
           </div>
         );
       },
@@ -182,11 +182,11 @@ const InstancesPage = () => {
     <div className="container mx-auto py-4">
       <div className="flex mb-4">
         <h1 className="text-2xl font-semibold">EC2 Instances</h1>
-        <PrimaryButton onClick={() => {}} className="ml-auto">
+        <Button onClick={() => {}} className="ml-auto">
           <div className="flex items-center">
             Filter <FaFilter className="ml-3" />
           </div>
-        </PrimaryButton>
+        </Button>
       </div>
       {/* Pass the instances and columns to the DataTable component */}
       <DataTable

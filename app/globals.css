@@ -14,10 +14,19 @@
   }
 }
 
+html {
+  display: flex;
+}
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 body {

@@ -31,3 +31,29 @@ model User {
   createdAt DateTime @default(now()) // Auto-generated timestamp
   updatedAt DateTime @updatedAt     // Auto-update timestamp
 }
+
+model Playbook {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  steps       Step[]
+}
+
+model Step {
+  id          Int      @id @default(autoincrement())
+  type        String   // e.g., "start-instances", "stop-instances", "restore-instances"
+  playbookId  Int
+  playbook    Playbook @relation(fields: [playbookId], references: [id])
+  targets     Target[]  // Multiple targets (instances) for each step
+}
+
+model Target {
+  id            Int      @id @default(autoincrement())
+  instanceId    String   // EC2 instance ID (e.g., "i-0454f86c03b5d679e")
+  instanceName  String   // Optional: EC2 instance name for user-friendly references
+  availabilityZone String // Optional: EC2 instance availability zone
+  snapshotId    String?  // Optional: Snapshot ID (for restore operations)
+  snapshotName  String?  // Optional: Snapshot Name (for better readability)
+  stepId        Int
+  step          Step     @relation(fields: [stepId], references: [id])
+}

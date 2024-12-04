@@ -1,6 +1,6 @@
 'use client';
 
-import PrimaryButton from '@/ui/buttons/PrimaryButton';
+import Button from '@/ui/buttons/Button';
 import StatusChip, { EC2Status } from '@/ui/chips/StatusChips';
 import DataTable, { Column } from '@/ui/tables/DataTable';
 import { Volume } from '@aws-sdk/client-ec2';
@@ -126,11 +126,11 @@ const VolumesPage = () => {
     <div className="container mx-auto py-4">
       <div className="flex mb-4">
         <h1 className="text-2xl font-semibold">EC2 Volumes</h1>
-        <PrimaryButton onClick={() => {}} className="ml-auto">
+        <Button onClick={() => {}} className="ml-auto">
           <div className="flex items-center">
             Filter <FaFilter className="ml-3" />
           </div>
-        </PrimaryButton>
+        </Button>
       </div>
       {/* Pass the volumes and columns to the DataTable component */}
       <DataTable data={volumes} columns={columns} onRowClick={handleRowClick} />

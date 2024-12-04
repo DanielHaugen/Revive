@@ -14,9 +14,15 @@ type DataTableProps<T> = {
   data: T[];
   columns: Column<T>[];
   onRowClick?: (rowData: T, e: React.MouseEvent) => void; // New prop for row click handling
+  className?: string;
 };
 
-function DataTable<T>({ data, columns, onRowClick }: DataTableProps<T>) {
+function DataTable<T>({
+  data,
+  columns,
+  onRowClick,
+  className,
+}: DataTableProps<T>) {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof T;
     direction: 'ascending' | 'descending';
@@ -52,7 +58,9 @@ function DataTable<T>({ data, columns, onRowClick }: DataTableProps<T>) {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full">
+    <div
+      className={`bg-white shadow-lg rounded-lg overflow-hidden w-full ${className}`}
+    >
       <table className="min-w-full table-auto border-collapse">
         <thead className="bg-gray-100">
           <tr>

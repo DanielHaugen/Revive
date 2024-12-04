@@ -1,15 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-interface Option {
+export interface Option {
   value: string;
   label: string;
 }
 
 interface SearchDropdownProps {
   options: Option[];
-  onChange: (value: string) => void;
+  onChange: (value: Option) => void;
+  value?: Option | null; // New prop for controlled input
   disabled?: boolean;
   placeholder?: string;
 }
@@ -17,12 +18,16 @@ interface SearchDropdownProps {
 const SearchableDropdown = ({
   options,
   onChange,
+  value = null,
   disabled = false,
   placeholder = 'Select an option...',
 }: SearchDropdownProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
+  const [selectedLabel, setSelectedLabel] = useState<string | null>(
+    value ? value.label : null
+  );
+  const dropdownRef = useRef<HTMLDivElement>(null); // Reference to the dropdown container
 
   // Filter options based on the search term
   const filteredOptions = options.filter((option) =>
@@ -30,18 +35,49 @@ const SearchableDropdown = ({
   );
 
   const handleSelect = (option: Option) => {
-    setSelectedLabel(option.label);
-    onChange(option.value); // Pass selected value to parent
+    setSelectedLabel(option.label); // Set the selected label for display
+    setSearchTerm(''); // Clear the search term for the next search
+    onChange(option); // Pass selected value to parent
     setIsOpen(false); // Close the dropdown
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Update selected label when value prop changes
+  useEffect(() => {
+    if (value) {
+      setSelectedLabel(value.label);
+    } else {
+      setSelectedLabel(null);
+    }
+  }, [value]);
+
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" ref={dropdownRef}>
       <input
         type="text"
         className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        value={selectedLabel || searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={searchTerm || selectedLabel || ''}
+        onChange={(e) => {
+          setSearchTerm(e.target.value);
+          setSelectedLabel(null); // Clear the selected label when typing
+          setIsOpen(true); // Ensure the dropdown remains open when typing
+        }}
         onFocus={() => setIsOpen(true)}
         disabled={disabled}
         placeholder={placeholder}
