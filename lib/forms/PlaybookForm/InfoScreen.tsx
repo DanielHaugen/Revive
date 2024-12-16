@@ -2,17 +2,14 @@
 
 import Card from '@/lib/ui/card/Card';
 import { ChangeEvent } from 'react';
-import { NewPlaybookData } from './page';
+import { PlaybookData } from './index';
 
-type GeneralInformationProps = {
-  formData: NewPlaybookData;
-  setFormData: React.Dispatch<React.SetStateAction<NewPlaybookData>>;
+type InfoProps = {
+  formData: PlaybookData;
+  setFormData: React.Dispatch<React.SetStateAction<PlaybookData>>;
 };
 
-const GeneralInformation: React.FC<GeneralInformationProps> = ({
-  formData,
-  setFormData,
-}) => {
+const InfoScreen: React.FC<InfoProps> = ({ formData, setFormData }) => {
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -54,4 +51,4 @@ const GeneralInformation: React.FC<GeneralInformationProps> = ({
   );
 };
 
-export default GeneralInformation;
+export default InfoScreen;

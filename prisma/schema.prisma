@@ -36,24 +36,24 @@ model Playbook {
   id          Int      @id @default(autoincrement())
   name        String
   description String
-  steps       Step[]
+  steps       Step[] @relation("PlaybookSteps")
 }
 
 model Step {
   id          Int      @id @default(autoincrement())
   type        String   // e.g., "start-instances", "stop-instances", "restore-instances"
   playbookId  Int
-  playbook    Playbook @relation(fields: [playbookId], references: [id])
-  targets     Target[]  // Multiple targets (instances) for each step
+  playbook    Playbook @relation("PlaybookSteps", fields: [playbookId], references: [id], onDelete: Cascade) // Cascading delete for Playbook -> Step
+  targets     Target[] @relation("StepTargets") // Multiple targets (instances) for each step
 }
 
 model Target {
   id            Int      @id @default(autoincrement())
   instanceId    String   // EC2 instance ID (e.g., "i-0454f86c03b5d679e")
-  instanceName  String   // Optional: EC2 instance name for user-friendly references
-  availabilityZone String // Optional: EC2 instance availability zone
+  instanceName  String?   // Optional: EC2 instance name for user-friendly references
+  availabilityZone String? // Optional: EC2 instance availability zone
   snapshotId    String?  // Optional: Snapshot ID (for restore operations)
   snapshotName  String?  // Optional: Snapshot Name (for better readability)
   stepId        Int
-  step          Step     @relation(fields: [stepId], references: [id])
+  step          Step     @relation("StepTargets", fields: [stepId], references: [id], onDelete: Cascade) // Cascading delete for Step -> Target
 }

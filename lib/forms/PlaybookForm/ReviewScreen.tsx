@@ -1,13 +1,13 @@
 'use client';
 
 import Card from '@/lib/ui/card/Card';
-import { NewPlaybookData } from './page';
+import { PlaybookData } from './index';
 
 type ReviewProps = {
-  formData: NewPlaybookData;
+  formData: PlaybookData;
 };
 
-const Review: React.FC<ReviewProps> = ({ formData }) => {
+const ReviewScreen: React.FC<ReviewProps> = ({ formData }) => {
   return (
     <Card>
       <h2 className="text-xl font-semibold mb-3">Review</h2>
@@ -53,7 +53,7 @@ const Review: React.FC<ReviewProps> = ({ formData }) => {
                 {step.targets && step.targets.length > 0 && (
                   <ul className="list-disc pl-5 mt-1 text-sm text-gray-700">
                     {step.targets.map((target, idx) => (
-                      <li key={idx}>{target}</li>
+                      <li key={idx}>{target.toString()}</li>
                     ))}
                   </ul>
                 )}
@@ -68,4 +68,4 @@ const Review: React.FC<ReviewProps> = ({ formData }) => {
   );
 };
 
-export default Review;
+export default ReviewScreen;

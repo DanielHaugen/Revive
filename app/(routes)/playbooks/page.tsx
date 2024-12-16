@@ -12,6 +12,7 @@ import {
   FaPlay,
   FaPlus,
   FaRegStar,
+  FaTrash,
 } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -22,7 +23,9 @@ const PlaybooksPage = () => {
   const [showAll, setShowAll] = useState<boolean>(true);
   const [playbooks, setPlaybooks] = useState<Playbook[]>([]); // State to store fetched playbooks
   const [loading, setLoading] = useState<boolean>(true);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [runningPlaybookId, setRunningPlaybookId] = useState<number | null>(
+    null
+  ); // ID of the running playbook
   const router = useRouter();
 
   useEffect(() => {
@@ -42,7 +45,23 @@ const PlaybooksPage = () => {
   }, []);
 
   const columns: Column<Playbook>[] = [
-    { header: 'Name', accessor: 'name' },
+    {
+      header: 'Name',
+      accessor: (item) => item as unknown as React.ReactNode,
+      render: (value) => {
+        const playbook = value as unknown as Playbook;
+        return (
+          <div className="flex gap-2 items-center">
+            <span>{playbook.name}</span>
+            <FaRegStar
+              className="cursor-pointer hover:text-blue-600 text-xl"
+              title="Star this Playbook"
+              onClick={() => onPlaybookStarClicked(playbook)}
+            />
+          </div>
+        );
+      },
+    },
     { header: 'Description', accessor: 'description' },
     {
       header: 'Actions',
@@ -55,17 +74,27 @@ const PlaybooksPage = () => {
               onClick={() => onPlaybookRunClicked(playbook)}
               ariaLabel="Run Playbook"
               className="flex items-center justify-center"
-              disabled={isRunning}
+              disabled={runningPlaybookId === playbook.id}
               title="Run this Playbook"
             >
-              <FaPlay className="text-white-600 mr-2" />
-              Run
+              {runningPlaybookId === playbook.id ? (
+                <span>Running...</span>
+              ) : (
+                <>
+                  <FaPlay className="text-white-600 mr-2" />
+                  Run
+                </>
+              )}
             </Button>
-            <FaRegStar
-              className="cursor-pointer hover:text-blue-600 text-xl"
-              title="Star this Playbook"
-              onClick={() => onPlaybookStarClicked(playbook)}
-            />
+            <Button
+              onClick={() => onPlaybookDeleteClicked(playbook.id)}
+              ariaLabel="Delete Playbook"
+              className="flex items-center justify-center"
+              variant="danger"
+              title="Delete this Playbook"
+            >
+              <FaTrash className="text-white-600 my-1" />
+            </Button>
           </div>
         );
       },
@@ -77,18 +106,52 @@ const PlaybooksPage = () => {
     toast.success('Playbook starred');
   };
 
-  const onPlaybookRunClicked = (playbook: Playbook) => {
-    console.log('Clicked Run:', playbook);
-    toast.success('Playbook Run Clicked');
+  const onPlaybookRunClicked = async (playbook: Playbook) => {
+    setRunningPlaybookId(playbook.id); // Mark as running
+    try {
+      const response = await fetch(`/api/playbooks/${playbook.id}/run`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        toast.success(`Playbook "${playbook.name}" is running.`);
+      } else {
+        const error = await response.json();
+        toast.error(`Failed to run playbook: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Error running playbook:', error);
+      toast.error('An error occurred while running the playbook.');
+    } finally {
+      setRunningPlaybookId(null); // Reset running state
+    }
   };
 
   const handleRowClick = (playbook: Playbook, e: React.MouseEvent) => {
-    // Check if the clicked element is a button or the svg in the button
     if (e.target instanceof HTMLButtonElement || e.target instanceof SVGElement)
       return;
+    router.push(`/playbooks/${playbook.id}`);
+  };
 
-    console.log('Row Clicked:', playbook);
-    toast.success('Playbook Row Clicked');
+  const onPlaybookDeleteClicked = async (playbookId: number) => {
+    if (!confirm('Are you sure you want to delete this playbook?')) return;
+
+    try {
+      const response = await fetch(`/api/playbooks/${playbookId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setPlaybooks((prev) => prev.filter((p) => p.id !== playbookId));
+        toast.success('Playbook deleted successfully.');
+      } else {
+        const error = await response.json();
+        toast.error(`Failed to delete playbook: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Error deleting playbook:', error);
+      toast.error('An error occurred while deleting the playbook.');
+    }
   };
 
   return (

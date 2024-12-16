@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // If using Next.js
 
 export type Column<T> = {
   header: string;
@@ -64,9 +63,9 @@ function DataTable<T>({
       <table className="min-w-full table-auto border-collapse">
         <thead className="bg-gray-100">
           <tr>
-            {columns.map((column) => (
+            {columns.map((column, idx) => (
               <th
-                key={String(column.accessor)}
+                key={`col_${idx}`}
                 className="px-4 py-2 text-left cursor-pointer hover:bg-gray-200"
                 onClick={() => handleSort(column.accessor as keyof T)}
               >
@@ -85,7 +84,7 @@ function DataTable<T>({
         <tbody>
           {sortedData.map((row, rowIndex) => (
             <tr
-              key={rowIndex}
+              key={`row_${rowIndex}`}
               className="border-t hover:bg-gray-50 cursor-pointer" // Indicate clickability
               onClick={(e) => onRowClick && onRowClick(row, e)} // Handle row click
             >

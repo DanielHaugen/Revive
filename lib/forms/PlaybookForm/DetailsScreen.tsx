@@ -2,14 +2,14 @@
 
 import Card from '@/lib/ui/card/Card';
 import { ChangeEvent, useState } from 'react';
-import { NewPlaybookData } from './page';
+import { PlaybookData } from './index';
 import SearchableDropdown, { Option } from '@/lib/ui/inputs/SearchableDropdown';
 import Button from '@/lib/ui/buttons/Button';
 import { FaPlus, FaTrash } from 'react-icons/fa6';
 
 type DetailsProps = {
-  formData: NewPlaybookData;
-  setFormData: React.Dispatch<React.SetStateAction<NewPlaybookData>>;
+  formData: PlaybookData;
+  setFormData: React.Dispatch<React.SetStateAction<PlaybookData>>;
 };
 
 type StepData = {
@@ -17,7 +17,7 @@ type StepData = {
   targets: string[]; // This can be expanded to handle more complex target data
 };
 
-const Details: React.FC<DetailsProps> = ({ formData, setFormData }) => {
+const DetailsScreen: React.FC<DetailsProps> = ({ formData, setFormData }) => {
   const actionOptions: Option[] = [
     { label: 'Start Instances', value: 'start-instances' },
     { label: 'Stop Instances', value: 'stop-instances' },
@@ -107,4 +107,4 @@ const Details: React.FC<DetailsProps> = ({ formData, setFormData }) => {
   );
 };
 
-export default Details;
+export default DetailsScreen;

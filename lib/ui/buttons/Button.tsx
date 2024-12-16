@@ -20,6 +20,7 @@ type PrimaryButtonProps = {
     | 'light-outline'
     | 'dark'
     | 'dark-outline'; // Added dark variants
+  rounded?: string;
 };
 
 // Function to get variant-specific Tailwind classes
@@ -56,10 +57,10 @@ const getVariantClassName = (variant: string) => {
 const getButtonClassName = (
   disabled: boolean,
   variant: string,
+  rounded: string,
   className?: string
 ) => {
-  const baseClassName =
-    'px-4 py-2 font-semibold rounded-lg shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50';
+  const baseClassName = `px-4 py-2 font-semibold ${rounded} shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50`;
   const disabledClassName = 'disabled:bg-gray-300 disabled:cursor-not-allowed';
   const variantClassName = getVariantClassName(variant);
 
@@ -76,12 +77,13 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   ariaLabel,
   title,
   variant = 'primary', // Default variant
+  rounded = 'rounded-lg',
 }) => {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={getButtonClassName(disabled, variant, className)}
+      className={getButtonClassName(disabled, variant, rounded, className)}
       title={title}
       aria-label={ariaLabel}
     >

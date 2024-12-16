@@ -1,31 +1,17 @@
-// app/api/instances/stop/route.ts
-
-import { EC2Client, StopInstancesCommand } from '@aws-sdk/client-ec2';
 import { NextResponse } from 'next/server';
-
-const ec2Client = new EC2Client({ region: 'us-east-1' }); // Update with your AWS region
+import { stopInstances } from '../api';
 
 export async function POST(request: Request) {
+  // Parse instance IDs from the request body
   const { instanceIds }: { instanceIds: string[] } = await request.json();
 
-  try {
-    // Prepare the StopInstances command for multiple instance IDs
-    const stopInstancesCommand = new StopInstancesCommand({
-      InstanceIds: instanceIds, // Stop multiple instances by IDs
-    });
-
-    // Send the command to EC2
-    const data = await ec2Client.send(stopInstancesCommand);
-
-    return NextResponse.json({
-      message: 'Instances are stopping.',
-      data: data.StoppingInstances,
-    });
-  } catch (error) {
-    console.error('Error stopping EC2 instances:', error);
+  // Validate instance IDs
+  if (!Array.isArray(instanceIds) || instanceIds.length === 0) {
     return NextResponse.json(
-      { message: 'Error stopping instances' },
-      { status: 500 }
+      { message: 'Instance IDs are required and must be a non-empty array.' },
+      { status: 400 }
     );
   }
+
+  return await stopInstances(instanceIds);
 }
