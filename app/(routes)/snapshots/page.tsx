@@ -1,28 +1,21 @@
 'use client';
 
 import StatusChip from '@/lib/ui/chips/StatusChips';
+import Copy from '@/lib/ui/icons/Copy';
 import Button from '@/ui/buttons/Button';
 import DataTable, { Column } from '@/ui/tables/DataTable';
 import { Snapshot } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaFilter, FaRegCopy } from 'react-icons/fa6';
+import { FaFilter } from 'react-icons/fa6';
+import { SnapshotState, mapSnapshotStateToVariant } from './utils';
 
 const columns: Column<Snapshot>[] = [
   {
     header: 'Snapshot ID',
     accessor: 'SnapshotId',
-    render: (value) => (
-      <span className="flex items-center">
-        {value as string}
-        <FaRegCopy
-          className="ml-2 cursor-pointer hover:text-blue-500 duration-100"
-          title="Copy Snapshot ID"
-          onClick={() => navigator.clipboard.writeText(value as string)}
-        />
-      </span>
-    ),
+    render: (value) => <Copy value={value as string} title="Snapshot ID" />,
   },
   {
     header: 'Volume ID',
@@ -54,7 +47,12 @@ const columns: Column<Snapshot>[] = [
   {
     header: 'Status',
     accessor: (item) => item.State,
-    render: (value) => <StatusChip status={value as string} />,
+    render: (value) => (
+      <StatusChip
+        variant={mapSnapshotStateToVariant(value as SnapshotState)}
+        label={value as string}
+      />
+    ),
   },
   {
     header: 'Date Taken',

@@ -1,29 +1,22 @@
 'use client';
 
+import Copy from '@/lib/ui/icons/Copy';
 import Button from '@/ui/buttons/Button';
-import StatusChip, { EC2Status } from '@/ui/chips/StatusChips';
+import StatusChip from '@/ui/chips/StatusChips';
 import DataTable, { Column } from '@/ui/tables/DataTable';
 import { Volume } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaFilter, FaRegCopy } from 'react-icons/fa6';
+import { FaFilter } from 'react-icons/fa6';
+import { VolumeState, mapVolumeStateToVariant } from './utils';
 
 // Use the type guard in the render function
 const columns: Column<Volume>[] = [
   {
     header: 'Volume ID',
     accessor: 'VolumeId',
-    render: (value) => (
-      <span className="flex items-center">
-        {value as string}
-        <FaRegCopy
-          className="ml-2 cursor-pointer hover:text-blue-500 duration-100"
-          title="Copy Volume ID"
-          onClick={() => navigator.clipboard.writeText(value as string)}
-        />
-      </span>
-    ),
+    render: (value) => <Copy value={value as string} title="Volume ID" />,
   },
   {
     header: 'Attachments',
@@ -62,7 +55,12 @@ const columns: Column<Volume>[] = [
     header: 'Status',
     accessor: (item) => item.State || 'Unknown',
     render: (value, item) => {
-      return <StatusChip status={value as EC2Status} />;
+      return (
+        <StatusChip
+          variant={mapVolumeStateToVariant(value as VolumeState)}
+          label={value as VolumeState}
+        />
+      );
     },
   },
 ];

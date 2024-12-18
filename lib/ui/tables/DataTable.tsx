@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { twJoin } from 'tailwind-merge';
 
 export type Column<T> = {
   header: string;
@@ -85,8 +86,11 @@ function DataTable<T>({
           {sortedData.map((row, rowIndex) => (
             <tr
               key={`row_${rowIndex}`}
-              className="border-t hover:bg-gray-50 cursor-pointer" // Indicate clickability
-              onClick={(e) => onRowClick && onRowClick(row, e)} // Handle row click
+              className={twJoin([
+                'border-t hover:bg-gray-50',
+                onRowClick && 'cursor-pointer',
+              ])} // Indicate clickability
+              onClick={onRowClick ? (e) => onRowClick(row, e) : undefined} // Handle row click
             >
               {columns.map((column) => {
                 const cellValue =

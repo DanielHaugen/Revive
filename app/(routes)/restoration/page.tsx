@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import SearchDropdown from '@/ui/inputs/SearchableDropdown';
 import Button from '@/ui/buttons/Button';
-import { FaRotateRight } from 'react-icons/fa6';
+import SearchDropdown from '@/ui/inputs/SearchableDropdown';
 import { Instance, Snapshot } from '@aws-sdk/client-ec2';
+import { useEffect, useState } from 'react';
+import { FaRotateRight } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 
 const RestorationPage = () => {
