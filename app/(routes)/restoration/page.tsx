@@ -1,5 +1,6 @@
 'use client';
 
+import Card from '@/lib/ui/card/Card';
 import Button from '@/ui/buttons/Button';
 import SearchDropdown from '@/ui/inputs/SearchableDropdown';
 import { Instance, Snapshot } from '@aws-sdk/client-ec2';
@@ -101,10 +102,11 @@ const RestorationPage = () => {
     <div className="container mx-auto py-4">
       <h1 className="text-2xl font-semibold mb-6">EC2 Restorations</h1>
 
-      <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="grid grid-cols-1 2xl:grid-cols-2 gap-x-8 gap-y-2">
+        <Card className="grid grid-cols-1 3xl:grid-cols-2 gap-4">
+          <h1 className="text-xl font-semibold">New Restoration</h1>
           {/* Instance Dropdown */}
-          <div className="mb-4">
+          <div>
             <label className="block mb-2 font-medium">Select Instance</label>
             <SearchDropdown
               options={instances.map(
@@ -126,13 +128,19 @@ const RestorationPage = () => {
 
           {/* Snapshot Dropdown */}
           {selectedInstance && (
-            <div className="mb-4">
+            <div>
               <label className="block mb-2 font-medium">Select Snapshot</label>
               <SearchDropdown
-                options={snapshots.map(({ SnapshotId, CompletionTime }) => ({
-                  value: SnapshotId ?? '',
-                  label: `${SnapshotId} - Taken on ${CompletionTime}`,
-                }))}
+                options={snapshots.map(
+                  ({ SnapshotId, CompletionTime, Tags }) => ({
+                    value: SnapshotId ?? '',
+                    label: `${
+                      Tags && Tags.find((t) => t.Key == 'Name')
+                        ? Tags.find((t) => t.Key == 'Name')?.Value
+                        : SnapshotId
+                    } - Taken on ${CompletionTime}`,
+                  })
+                )}
                 onChange={(option) => setSelectedSnapshot(option.value)}
                 placeholder="Select a snapshot..."
               />
@@ -154,18 +162,22 @@ const RestorationPage = () => {
             )}
             {isRestoring ? 'Restoring...' : 'Restore Instance'}
           </Button>
-        </div>
+        </Card>
 
-        {/* Progress Output */}
-        {progress && (
-          <div className="col-span-1 2xl:col-span-2 bg-white p-4 rounded-lg shadow-md mt-4">
-            <h2 className="text-lg font-semibold mb-2">Progress</h2>
-            <pre className="whitespace-pre-wrap text-sm text-gray-700">
-              {progress}
-            </pre>
-          </div>
-        )}
+        <Card>
+          <h1 className="text-xl font-semibold">Recent Restorations</h1>
+        </Card>
       </div>
+
+      {/* Progress Output */}
+      {progress && (
+        <Card className="col-span-1 2xl:col-span-2 p-4">
+          <h2 className="text-lg font-semibold mb-2">Progress</h2>
+          <pre className="whitespace-pre-wrap text-sm text-gray-700">
+            {progress.trim()}
+          </pre>
+        </Card>
+      )}
     </div>
   );
 };

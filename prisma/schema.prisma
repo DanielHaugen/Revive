@@ -37,6 +37,7 @@ model Playbook {
   name        String
   description String
   steps       Step[] @relation("PlaybookSteps")
+  starred     Boolean  @default(false)
 }
 
 model Step {

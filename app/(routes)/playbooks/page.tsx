@@ -14,6 +14,7 @@ import {
   FaPlay,
   FaPlus,
   FaRegStar,
+  FaStar,
   FaTrash,
 } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
@@ -53,11 +54,19 @@ const PlaybooksPage = () => {
         return (
           <div className="flex gap-2 items-center">
             <span>{playbook.name}</span>
-            <FaRegStar
-              className="cursor-pointer hover:text-blue-600 text-xl"
-              title="Star this Playbook"
-              onClick={() => onPlaybookStarClicked(playbook)}
-            />
+            {playbook.starred ? (
+              <FaStar
+                className="cursor-pointer hover:text-yellow-500 text-xl text-blue-600 duration-200"
+                title="Unstar this Playbook"
+                onClick={() => onPlaybookStarClicked(playbook)}
+              />
+            ) : (
+              <FaRegStar
+                className="cursor-pointer hover:text-blue-600 text-xl"
+                title="Star this Playbook"
+                onClick={() => onPlaybookStarClicked(playbook)}
+              />
+            )}
           </div>
         );
       },
@@ -101,9 +110,30 @@ const PlaybooksPage = () => {
     },
   ];
 
-  const onPlaybookStarClicked = (playbook: Playbook) => {
-    console.log('Starred:', playbook);
-    toast.success('Playbook starred');
+  const onPlaybookStarClicked = async (playbook: Playbook) => {
+    try {
+      const response = await fetch(`/api/playbooks/${playbook.id}/star`, {
+        method: 'PUT',
+      });
+
+      if (response.ok) {
+        const updatedPlaybook: Playbook = await response.json();
+        setPlaybooks((prev) =>
+          prev.map((p) => (p.id === updatedPlaybook.id ? updatedPlaybook : p))
+        );
+        toast.success(
+          `${updatedPlaybook.starred ? 'Starred' : 'Unstarred'} playbook "${
+            playbook.name
+          }".`
+        );
+      } else {
+        const error = await response.json();
+        toast.error(`Failed to toggle star: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Error toggling star:', error);
+      toast.error('An error occurred while toggling the star.');
+    }
   };
 
   const onPlaybookRunClicked = async (playbook: Playbook) => {
@@ -203,9 +233,18 @@ const PlaybooksPage = () => {
         </div>
         {showStarred && (
           <>
-            <Card>
-              <p className="text-center">No starred Playbooks found.</p>
-            </Card>
+            {playbooks.filter((p) => p.starred).length === 0 ? (
+              <Card>
+                <p className="text-center">No starred Playbooks found.</p>
+              </Card>
+            ) : (
+              <DataTable
+                data={playbooks.filter((p) => p.starred)}
+                columns={columns}
+                onRowClick={handleRowClick}
+                className="my-4"
+              />
+            )}
           </>
         )}
       </section>

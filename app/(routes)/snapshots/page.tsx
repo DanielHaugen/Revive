@@ -30,7 +30,7 @@ const columns: Column<Snapshot>[] = [
     ),
   },
   {
-    header: 'Volume Size',
+    header: 'Size',
     accessor: 'VolumeSize',
     render: (value) => <span>{value as number} GB</span>,
   },
@@ -41,8 +41,8 @@ const columns: Column<Snapshot>[] = [
   {
     header: 'Tags',
     accessor: (item) =>
-      item.Tags?.map((tag) => `${tag.Key}: ${tag.Value}`).join(', ') || 'None',
-    render: (value) => <span>{value as string}</span>,
+      item.Tags?.map((tag) => `${tag.Key}: ${tag.Value}`).join('\n') || 'None',
+    render: (value) => <pre>{value as string}</pre>,
   },
   {
     header: 'Status',
