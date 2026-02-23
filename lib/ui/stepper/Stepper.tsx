@@ -18,7 +18,7 @@ const Stepper: React.FC<StepperProps> = ({ steps, currentStep }) => {
           {index < steps.length - 1 && (
             <div
               className={`absolute top-1/2 left-1/2 w-full h-1 transform -translate-y-1/2 ${
-                currentStep > index ? 'bg-blue-600' : 'bg-gray-300'
+                currentStep > index ? 'bg-blue-600' : 'bg-gray-700'
               }`}
               style={{ width: '100%' }}
             ></div>
@@ -30,15 +30,15 @@ const Stepper: React.FC<StepperProps> = ({ steps, currentStep }) => {
               currentStep > index
                 ? 'bg-blue-600'
                 : currentStep === index
-                ? 'bg-blue-400'
-                : 'bg-gray-300'
+                ? 'bg-blue-500'
+                : 'bg-gray-700'
             }`}
           >
             {currentStep > index ? <FaCheck /> : <span>{index + 1}</span>}
           </div>
 
           {/* Step label */}
-          <div className="absolute top-14 text-center text-sm text-gray-700 w-full">
+          <div className="absolute top-14 text-center text-sm text-gray-400 w-full">
             {step}
           </div>
         </div>

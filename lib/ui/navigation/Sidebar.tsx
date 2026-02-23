@@ -13,6 +13,8 @@ import {
   FaRegClone,
   FaRegHardDrive,
   FaUser,
+  FaChevronLeft,
+  FaChevronRight,
 } from 'react-icons/fa6';
 import { IconType } from 'react-icons';
 
@@ -33,13 +35,13 @@ export default function Sidebar() {
       section: 'General',
       links: [
         { href: '/', label: 'Home', icon: FaHouse },
-        { href: '/logs', label: 'Activity Logs', icon: FaRegClock },
+        { href: '/logs', label: 'Audit Logs', icon: FaRegClock },
       ],
     },
     {
       section: 'Virtual Machines',
       links: [
-        { href: '/instances', label: 'EC2 Instances', icon: FaMicrochip },
+        { href: '/instances', label: 'Instances', icon: FaMicrochip },
         { href: '/volumes', label: 'Volumes', icon: FaRegHardDrive },
         { href: '/snapshots', label: 'Snapshots', icon: FaImage },
         { href: '/restoration', label: 'Restoration', icon: FaRegClone },
@@ -57,51 +59,56 @@ export default function Sidebar() {
         { href: '/auth/logout', label: 'Logout', icon: FaPowerOff },
       ],
     },
-    // Add more sections and links as needed
   ];
 
   return (
-    <div className="relative flex">
-      {/* Floating Chip */}
-      <div
-        className="absolute -right-[27px] top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-2 py-4 rounded-r-lg cursor-pointer shadow-md z-10"
-        onClick={() => setIsCollapsed(!isCollapsed)}
-      >
-        {isCollapsed ? '>' : '<'}
-      </div>
-
+    <div className="relative flex h-screen">
       {/* Sidebar Container */}
       <div
-        className={`flex flex-col bg-gray-800 text-white duration-300 pt-3 ${
-          isCollapsed ? 'w-0 opacity-0' : 'w-72'
+        className={`flex flex-col bg-gradient-to-b from-gray-900 to-gray-950 text-white border-r border-gray-800 transition-all duration-300 ${
+          isCollapsed ? 'w-20' : 'w-64'
         }`}
       >
-        {routes.map((section, index) => (
-          <div
-            key={index}
-            className={`duration-300 ${isCollapsed ? 'hidden' : ''}`}
-          >
-            <h6 className="px-4 py-2 text-xs font-bold text-gray-400">
-              {section.section}
-            </h6>
-            <ul>
-              {section.links.map((link, linkIndex) => (
-                <li key={linkIndex} className="ml-4">
-                  <Link
-                    href={link.href}
-                    className="block px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 duration-300"
-                  >
-                    <div className="flex items-center text-lg">
-                      {link.icon && <link.icon className="mr-3" />}
-                      {link.label}
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        {/* Navigation Sections */}
+        <div className="flex-1 overflow-y-auto py-6 px-3">
+          {routes.map((section, index) => (
+            <div key={index} className="mb-8">
+              {!isCollapsed && (
+                <h6 className="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+                  {section.section}
+                </h6>
+              )}
+              <ul className="space-y-1">
+                {section.links.map((link, linkIndex) => (
+                  <li key={linkIndex}>
+                    <Link
+                      href={link.href}
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 hover:bg-gray-800 rounded-lg transition-colors duration-200"
+                      title={isCollapsed ? link.label : ''}
+                    >
+                      {link.icon && <link.icon className="text-base flex-shrink-0" />}
+                      {!isCollapsed && <span>{link.label}</span>}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Collapse Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-all duration-300 z-10"
+        aria-label="Toggle sidebar"
+      >
+        {isCollapsed ? (
+          <FaChevronRight className="text-sm" />
+        ) : (
+          <FaChevronLeft className="text-sm" />
+        )}
+      </button>
     </div>
   );
 }

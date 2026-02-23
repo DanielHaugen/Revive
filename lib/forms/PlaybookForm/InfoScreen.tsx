@@ -31,7 +31,7 @@ const InfoScreen: React.FC<InfoProps> = ({ formData, setFormData }) => {
           value={formData.name}
           onChange={handleInputChange}
           required={true}
-          className="mt-1 px-4 py-2 border border-gray-300 rounded-lg w-full"
+          className="form-input mt-1"
         />
       </div>
       <div className="mb-3">
@@ -44,7 +44,7 @@ const InfoScreen: React.FC<InfoProps> = ({ formData, setFormData }) => {
           value={formData.description}
           onChange={handleInputChange}
           rows={5}
-          className="mt-1 px-4 py-2 border border-gray-300 rounded-lg w-full"
+          className="form-input mt-1"
         />
       </div>
     </Card>

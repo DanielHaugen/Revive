@@ -1,5 +1,6 @@
 'use client';
 
+import Card from '@/lib/ui/card/Card';
 import { Instance } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -45,7 +46,7 @@ export default function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Instances Overview */}
-        <div className="bg-white shadow-md rounded-lg p-4">
+        <Card className="bg-gray-900 text-white shadow-lg rounded-lg p-4">
           <h2 className="text-2xl font-semibold mb-4">EC2 Instances</h2>
           {instances.length === 0 ? (
             <p>No instances found.</p>
@@ -75,10 +76,10 @@ export default function Home() {
               Manage Instances
             </button>
           </Link>
-        </div>
+        </Card>
 
         {/* Snapshots Overview */}
-        <div className="bg-white shadow-md rounded-lg p-4">
+        <Card className="bg-gray-900 text-white shadow-lg rounded-lg p-4">
           <h2 className="text-2xl font-semibold mb-4">Snapshots</h2>
           {snapshots.length === 0 ? (
             <p>No snapshots found.</p>
@@ -100,7 +101,7 @@ export default function Home() {
               Manage Snapshots
             </button>
           </Link>
-        </div>
+        </Card>
       </div>
     </div>
   );

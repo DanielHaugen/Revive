@@ -21,28 +21,40 @@ const StatusChip: React.FC<StatusChipProps> = ({
   className,
 }) => {
   let statusColor: string;
+  let bgColor: string;
 
   switch (variant) {
     case 'success':
-      statusColor = 'bg-green-500';
+      statusColor = 'text-green-300';
+      bgColor = 'bg-green-900 bg-opacity-40';
       break;
     case 'warning':
-      statusColor = 'bg-yellow-500';
+      statusColor = 'text-yellow-300';
+      bgColor = 'bg-yellow-900 bg-opacity-40';
       break;
     case 'error':
-      statusColor = 'bg-red-500';
+      statusColor = 'text-red-300';
+      bgColor = 'bg-red-900 bg-opacity-40';
       break;
     case 'info':
-      statusColor = 'bg-cyan-500';
+      statusColor = 'text-cyan-300';
+      bgColor = 'bg-cyan-900 bg-opacity-40';
       break;
     case 'secondary':
     default:
-      statusColor = 'bg-gray-500';
+      statusColor = 'text-gray-300';
+      bgColor = 'bg-gray-700 bg-opacity-40';
   }
 
   return (
     <span
-      className={`${statusColor} text-white py-1 px-3 rounded-full text-sm font-medium ${className}`}
+      className={`${bgColor} ${statusColor} py-1 px-3 rounded-full text-sm font-medium border border-opacity-30 ${
+        variant === 'success' ? 'border-green-500' : ''
+      } ${variant === 'warning' ? 'border-yellow-500' : ''} ${
+        variant === 'error' ? 'border-red-500' : ''
+      } ${variant === 'info' ? 'border-cyan-500' : ''} ${
+        variant === 'secondary' ? 'border-gray-500' : ''
+      } ${className}`}
     >
       {/* Display the status in title case */}
       {label.charAt(0).toUpperCase() + label.slice(1)}

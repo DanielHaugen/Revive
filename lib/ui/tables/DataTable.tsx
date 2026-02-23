@@ -59,21 +59,21 @@ function DataTable<T>({
 
   return (
     <div
-      className={`bg-white shadow-lg rounded-lg overflow-hidden w-full ${className}`}
+      className={`bg-gray-900 border border-gray-800 rounded-lg overflow-hidden w-full ${className}`}
     >
       <table className="min-w-full table-auto border-collapse">
-        <thead className="bg-gray-100">
+        <thead className="bg-gray-800 border-b border-gray-700">
           <tr>
             {columns.map((column, idx) => (
               <th
                 key={`col_${idx}`}
-                className="px-4 py-2 text-left cursor-pointer hover:bg-gray-200"
+                className="px-6 py-3 text-left text-sm font-semibold text-gray-300 cursor-pointer hover:bg-gray-700 transition-colors"
                 onClick={() => handleSort(column.accessor as keyof T)}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   {column.header}
                   {sortConfig.key === column.accessor && (
-                    <span className="ml-2 text-gray-600">
+                    <span className="text-gray-500 text-xs">
                       {sortConfig.direction === 'ascending' ? '↑' : '↓'}
                     </span>
                   )}
@@ -83,49 +83,57 @@ function DataTable<T>({
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((row, rowIndex) => (
-            <tr
-              key={`row_${rowIndex}`}
-              className={twJoin([
-                'border-t hover:bg-gray-50',
-                onRowClick && 'cursor-pointer',
-              ])} // Indicate clickability
-              onClick={onRowClick ? (e) => onRowClick(row, e) : undefined} // Handle row click
-            >
-              {columns.map((column) => {
-                const cellValue =
-                  typeof column.accessor === 'function'
-                    ? column.accessor(row)
-                    : row[column.accessor];
+          {sortedData.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500">
+                No instances found in this region.
+              </td>
+            </tr>
+          ) : (
+            sortedData.map((row, rowIndex) => (
+              <tr
+                key={`row_${rowIndex}`}
+                className={twJoin([
+                  'border-t border-gray-800 hover:bg-gray-800 transition-colors',
+                  onRowClick && 'cursor-pointer',
+                ])}
+                onClick={onRowClick ? (e) => onRowClick(row, e) : undefined}
+              >
+                {columns.map((column) => {
+                  const cellValue =
+                    typeof column.accessor === 'function'
+                      ? column.accessor(row)
+                      : row[column.accessor];
 
-                const renderValue = column.render
-                  ? column.render(cellValue, row)
-                  : renderDefault(cellValue);
+                  const renderValue = column.render
+                    ? column.render(cellValue, row)
+                    : renderDefault(cellValue);
 
-                // If the render value is a promise, resolve it
-                if (renderValue instanceof Promise) {
-                  const [resolvedValue, setResolvedValue] =
-                    useState<React.ReactNode | null>(null);
+                  // If the render value is a promise, resolve it
+                  if (renderValue instanceof Promise) {
+                    const [resolvedValue, setResolvedValue] =
+                      useState<React.ReactNode | null>(null);
 
-                  useEffect(() => {
-                    renderValue.then((resolved) => setResolvedValue(resolved));
-                  }, [renderValue]);
+                    useEffect(() => {
+                      renderValue.then((resolved) => setResolvedValue(resolved));
+                    }, [renderValue]);
+
+                    return (
+                      <td key={String(column.header)} className="px-6 py-3 text-sm text-gray-300">
+                        {resolvedValue}
+                      </td>
+                    );
+                  }
 
                   return (
-                    <td key={String(column.header)} className="px-4 py-2">
-                      {resolvedValue}
+                    <td key={String(column.header)} className="px-6 py-3 text-sm text-gray-300">
+                      {renderValue}
                     </td>
                   );
-                }
-
-                return (
-                  <td key={String(column.header)} className="px-4 py-2">
-                    {renderValue}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
+                })}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

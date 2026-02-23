@@ -23,17 +23,14 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     setIsTransitioning(true);
     try {
       // Call your API to start the instance
-      await startInstance(instance.InstanceId as string); // Replace with your API call
-
-      // Optionally update the status in the instance object if needed
+      await startInstance(instance.InstanceId as string);
       toast.success('Starting Instance!');
     } catch (error) {
       console.error('Error starting instance', error);
-      toast.error('Error stopping Instance!');
+      toast.error('Error starting Instance!');
     } finally {
-      onClick && onClick();
+      if (onClick) onClick();
       setIsTransitioning(false);
-      fetch;
     }
   };
 
@@ -41,14 +38,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     setIsTransitioning(true);
     try {
       // Call your API to stop the instance
-      await stopInstance(instance.InstanceId as string); // Replace with your API call
-      // Optionally update the status in the instance object if needed
+      await stopInstance(instance.InstanceId as string);
       toast.success('Stopping Instance!');
     } catch (error) {
       console.error('Error stopping instance', error);
       toast.error('Error stopping Instance!');
     } finally {
-      onClick && onClick();
+      if (onClick) onClick();
       setIsTransitioning(false);
     }
   };
@@ -56,14 +52,16 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   const showStartButton = instance.State?.Name !== 'running';
   const isInstanceInTransition =
     instance.State?.Name === 'pending' || instance.State?.Name === 'stopping';
+
   return (
     <Button
       onClick={showStartButton ? handleStart : handleStop}
       ariaLabel={`${showStartButton ? 'Start' : 'Stop'} Instance`}
+      variant={showStartButton ? 'success' : 'danger'}
       className={`flex items-center justify-center ${className}`}
       disabled={isTransitioning || isInstanceInTransition}
     >
-      <FaPowerOff className="text-white-600 mr-2" />
+      <FaPowerOff className="mr-2" />
       {showStartButton ? 'Start' : 'Stop'}
     </Button>
   );

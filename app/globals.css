@@ -2,41 +2,113 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * ─── Design Tokens ────────────────────────────────────────────────────────────
+ * All core colors are defined here as CSS custom properties.
+ * To retheme the app, only adjust values in this :root block.
+ * ──────────────────────────────────────────────────────────────────────────────
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Backgrounds */
+  --background: #030712;          /* gray-950 — page/app background */
+  --surface: #111827;             /* gray-900 — cards, panels */
+  --surface-elevated: #1f2937;    /* gray-800 — hover / elevated state */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Input fields */
+  --input-bg: #1f2937;            /* gray-800 */
+  --input-border: #374151;        /* gray-700 */
+  --input-border-focus: #3b82f6;  /* blue-500 */
+  --input-ring: rgba(59, 130, 246, 0.3);
+
+  /* Text */
+  --text-primary: #f3f4f6;        /* gray-100 — main body text */
+  --text-secondary: #9ca3af;      /* gray-400 — labels, secondary text */
+  --text-placeholder: #6b7280;    /* gray-500 — input placeholders */
+
+  /* Brand / accent */
+  --color-primary: #3b82f6;       /* blue-500 */
+  --color-primary-hover: #2563eb; /* blue-600 */
+  --color-success: #22c55e;       /* green-500 */
+  --color-success-hover: #16a34a; /* green-600 */
+  --color-danger: #ef4444;        /* red-500 */
+  --color-danger-hover: #dc2626;  /* red-600 */
+  --color-warning: #f59e0b;       /* amber-500 */
+
+  /* Legacy aliases */
+  --foreground: var(--text-primary);
 }
 
 html {
   display: flex;
+  height: 100%;
 }
 html,
 body {
-  min-height: 100%;
+  height: 100%;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-}
-
-body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#__next {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/*
+ * ─── Shared Component Classes ─────────────────────────────────────────────────
+ * Use .form-input on all <input> and <textarea> elements for consistent
+ * dark-mode styling. Override border color with a Tailwind utility class
+ * (e.g. border-red-500) for validation states — utilities layer wins.
+ * ──────────────────────────────────────────────────────────────────────────────
+ */
+@layer components {
+  .form-input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .form-input::placeholder {
+    color: var(--text-placeholder);
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 2px var(--input-ring);
+  }
+
+  .form-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
   }
 }

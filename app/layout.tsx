@@ -22,20 +22,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-gray-100 text-gray-900`}>
-        {/* Header */}
-        <Navbar />
+      <body className={`${inter.className} bg-gray-950 text-gray-100 h-screen overflow-hidden`}>
+        <div className="flex h-screen flex-col">
+          {/* Header */}
+          <Navbar />
 
-        <div className="flex flex-grow h-full">
-          {/* Sidebar */}
-          <Sidebar />
+          <div className="flex flex-1 overflow-hidden">
+            {/* Sidebar */}
+            <Sidebar />
 
-          {/* Main Content */}
-          <main className="container mx-auto p-6 flex flex-col flex-grow">
-            {children}
-          </main>
+            {/* Main Content */}
+            <main className="flex-1 overflow-auto bg-gray-950">
+              <div className="p-6">
+                {children}
+              </div>
+            </main>
 
-          <ToastContainer position="bottom-right" />
+            <ToastContainer position="bottom-right" />
+          </div>
         </div>
       </body>
     </html>

@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import InfoScreen from './InfoScreen';
 import ReviewScreen from './ReviewScreen';
-import { toast } from 'react-toastify';
 import DetailsScreen from './DetailsScreen';
 
 export type PlaybookData = {

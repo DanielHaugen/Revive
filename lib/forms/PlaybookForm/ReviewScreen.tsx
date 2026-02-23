@@ -23,7 +23,7 @@ const ReviewScreen: React.FC<ReviewProps> = ({ formData }) => {
           type="text"
           value={formData.name}
           disabled={true}
-          className="mt-1 px-4 py-2 border border-gray-300 rounded-lg w-full disabled:cursor-not-allowed disabled:bg-gray-100"
+          className="form-input mt-1"
         />
       </div>
 
@@ -38,7 +38,7 @@ const ReviewScreen: React.FC<ReviewProps> = ({ formData }) => {
           value={formData.description}
           rows={5}
           disabled={true}
-          className="mt-1 px-4 py-2 border border-gray-300 rounded-lg w-full disabled:cursor-not-allowed disabled:bg-gray-100"
+          className="form-input mt-1"
         />
       </div>
 
@@ -48,10 +48,10 @@ const ReviewScreen: React.FC<ReviewProps> = ({ formData }) => {
         {formData.steps && formData.steps.length > 0 ? (
           <ul className="list-disc pl-5 space-y-2">
             {formData.steps.map((step, index) => (
-              <li key={index} className="bg-gray-50 p-3 rounded-md shadow-sm">
+              <li key={index} className="bg-gray-800 p-3 rounded-md shadow-sm">
                 <strong>Step {index + 1}:</strong> {step.type}
                 {step.targets && step.targets.length > 0 && (
-                  <ul className="list-disc pl-5 mt-1 text-sm text-gray-700">
+                    <ul className="list-disc pl-5 mt-1 text-sm text-gray-400">
                     {step.targets.map((target, idx) => (
                       <li key={idx}>{target.toString()}</li>
                     ))}
@@ -61,7 +61,7 @@ const ReviewScreen: React.FC<ReviewProps> = ({ formData }) => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">No steps added.</p>
+          <p className="text-gray-400">No steps added.</p>
         )}
       </div>
     </Card>

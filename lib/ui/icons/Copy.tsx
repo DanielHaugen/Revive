@@ -9,10 +9,10 @@ export interface CopyProps extends ComponentProps<'i'> {
 
 const Copy: FC<CopyProps> = ({ value, title }) => {
   return (
-    <span className="flex items-center">
+    <span className="flex items-center gap-2 text-gray-300">
       {value}
       <FaRegCopy
-        className="ml-2 cursor-pointer hover:text-blue-500 duration-100"
+        className="cursor-pointer hover:text-blue-400 transition-colors duration-150 text-sm"
         title={`Copy ${title || value}`}
         onClick={() => {
           navigator.clipboard.writeText(value as string);

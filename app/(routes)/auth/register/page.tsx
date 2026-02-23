@@ -82,7 +82,7 @@ export default function RegisterPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           onBlur={() => setEmailTouched(true)} // Set touched on blur
-          className={`border p-2 w-full ${
+          className={`form-input ${
             emailTouched && !isEmailValid && email ? 'border-red-500' : ''
           }`}
         />
@@ -101,12 +101,12 @@ export default function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             onFocus={() => setShowRequirements(true)}
             onBlur={() => setShowRequirements(false)}
-            className="border p-2 w-full pr-10" // Space for the button
+            className="form-input pr-16"
           />
           <button
             type="button"
-            onClick={() => setShowPassword(!showPassword)} // Toggle visibility
-            className="absolute inset-y-0 right-2 flex items-center text-gray-600"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-200 text-sm"
           >
             {showPassword ? 'Hide' : 'Show'}
           </button>
@@ -129,7 +129,7 @@ export default function RegisterPage() {
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className={`border p-2 w-full mb-4 ${
+          className={`form-input mb-4 ${
             password !== confirmPassword && confirmPassword
               ? 'border-red-500'
               : ''
@@ -140,10 +140,10 @@ export default function RegisterPage() {
         )}
         <button
           type="submit"
-          className={`w-full py-2 mt-4 text-white rounded ${
+          className={`w-full py-2 mt-4 text-white rounded-lg font-semibold transition-colors duration-200 ${
             isFormValid
-              ? 'bg-green-500 hover:bg-green-600 duration-200'
-              : 'bg-gray-300 cursor-not-allowed'
+              ? 'bg-green-600 hover:bg-green-700'
+              : 'bg-gray-700 text-gray-400 cursor-not-allowed'
           }`}
           disabled={!isFormValid}
         >

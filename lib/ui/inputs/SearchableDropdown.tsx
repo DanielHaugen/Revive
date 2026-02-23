@@ -71,7 +71,7 @@ const SearchableDropdown = ({
     <div className="relative w-full" ref={dropdownRef}>
       <input
         type="text"
-        className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="form-input"
         value={searchTerm || selectedLabel || ''}
         onChange={(e) => {
           setSearchTerm(e.target.value);
@@ -83,19 +83,19 @@ const SearchableDropdown = ({
         placeholder={placeholder}
       />
       {isOpen && (
-        <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+        <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-gray-800 border border-gray-700 rounded-md shadow-lg">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
               <li
                 key={option.value}
                 onClick={() => handleSelect(option)}
-                className="cursor-pointer px-4 py-2 hover:bg-blue-100"
+                className="cursor-pointer px-4 py-2 hover:bg-gray-700 text-gray-100"
               >
                 {option.label}
               </li>
             ))
           ) : (
-            <li className="px-4 py-2 text-gray-500">No results found</li>
+            <li className="px-4 py-2 text-gray-400">No results found</li>
           )}
         </ul>
       )}

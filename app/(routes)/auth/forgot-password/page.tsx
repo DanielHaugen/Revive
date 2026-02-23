@@ -25,13 +25,13 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded mt-10">
+    <div className="w-full max-w-xl mx-auto p-6 bg-gray-900 border border-gray-800 shadow-lg rounded-lg mt-10 text-gray-100">
       <h2 className="text-2xl font-bold mb-6 text-center">Forgot Password</h2>
 
       {!submitted ? (
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-gray-400 mb-2">
               Enter your email address:
             </label>
             <input
@@ -43,8 +43,8 @@ const ForgotPasswordPage = () => {
                 setEmailValid(true); // Reset validation error on input change
               }}
               onBlur={() => setEmailValid(validateEmail(email))}
-              className={`border p-2 w-full ${
-                !emailValid ? 'border-red-500' : 'border-gray-300'
+              className={`form-input ${
+                !emailValid ? 'border-red-500' : ''
               }`}
               placeholder="you@example.com"
               required
@@ -58,10 +58,10 @@ const ForgotPasswordPage = () => {
 
           <button
             type="submit"
-            className={`w-full py-2 mt-4 text-white rounded ${
+            className={`w-full py-2 mt-4 text-white rounded-lg font-semibold transition-colors duration-200 ${
               email && validateEmail(email)
-                ? 'bg-blue-500 hover:bg-blue-600'
-                : 'bg-gray-300 cursor-not-allowed'
+                ? 'bg-blue-600 hover:bg-blue-700'
+                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
             }`}
             disabled={!email || !validateEmail(email)}
           >

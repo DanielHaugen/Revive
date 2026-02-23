@@ -75,7 +75,7 @@ const LinkSnapshotModal: React.FC<LinkSnapshotModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div className="bg-gray-900 border border-gray-700 p-6 rounded-lg shadow-lg max-w-md w-full text-gray-100">
         <h2 className="text-xl font-bold mb-4">
           Link Snapshot to EC2 Instance
         </h2>
@@ -86,14 +86,14 @@ const LinkSnapshotModal: React.FC<LinkSnapshotModalProps> = ({
         />
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-400">
             Snapshot Name
           </label>
           <input
             type="text"
             value={snapshotName}
             onChange={(e) => setSnapshotName(e.target.value)}
-            className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="form-input mt-1"
             placeholder="Enter snapshot name..."
             required
           />
@@ -109,7 +109,7 @@ const LinkSnapshotModal: React.FC<LinkSnapshotModalProps> = ({
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded-lg"
+            className="px-4 py-2 bg-gray-700 text-gray-100 rounded-lg hover:bg-gray-600 transition-colors"
           >
             Cancel
           </button>

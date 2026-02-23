@@ -52,7 +52,7 @@ const DetailsScreen: React.FC<DetailsProps> = ({ formData, setFormData }) => {
       <h1 className="text-xl font-semibold mb-4">Playbook Details</h1>
 
       {steps.map((step, index) => (
-        <div key={index} className="mb-6 border-b pb-4">
+        <div key={index} className="mb-6 border-b border-gray-700 pb-4">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">
               Step {index + 1} -{' '}
@@ -86,7 +86,7 @@ const DetailsScreen: React.FC<DetailsProps> = ({ formData, setFormData }) => {
           <input
             type="text"
             placeholder="Target instance IDs"
-            className="border rounded p-2 w-full mt-1"
+            className="form-input mt-1"
             onChange={(e) => {
               const updatedSteps = [...steps];
               updatedSteps[index].targets = e.target.value.split(','); // Simple target handling

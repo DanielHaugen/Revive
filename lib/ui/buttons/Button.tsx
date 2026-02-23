@@ -19,7 +19,7 @@ type PrimaryButtonProps = {
     | 'light'
     | 'light-outline'
     | 'dark'
-    | 'dark-outline'; // Added dark variants
+    | 'dark-outline';
   rounded?: string;
 };
 
@@ -27,27 +27,27 @@ type PrimaryButtonProps = {
 const getVariantClassName = (variant: string) => {
   switch (variant) {
     case 'secondary':
-      return 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500';
+      return 'bg-gray-700 text-white hover:bg-gray-600 focus:ring-gray-500';
     case 'success':
       return 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500';
     case 'danger':
       return 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500';
     case 'primary-outline':
-      return 'border-2 border-blue-600 text-blue-600 hover:bg-blue-100 focus:ring-blue-500';
+      return 'border-2 border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white focus:ring-blue-500';
     case 'secondary-outline':
-      return 'border-2 border-gray-500 text-gray-600 hover:bg-gray-500 hover:text-white focus:ring-gray-500';
+      return 'border-2 border-gray-600 text-gray-300 hover:bg-gray-600 hover:text-white focus:ring-gray-500';
     case 'success-outline':
-      return 'border-2 border-green-600 text-green-600 hover:bg-green-100 focus:ring-green-500';
+      return 'border-2 border-green-600 text-green-400 hover:bg-green-600 hover:text-white focus:ring-green-500';
     case 'danger-outline':
-      return 'border-2 border-red-600 text-red-600 hover:bg-red-100 focus:ring-red-500';
+      return 'border-2 border-red-600 text-red-400 hover:bg-red-600 hover:text-white focus:ring-red-500';
     case 'light':
-      return 'bg-white text-gray-800 hover:bg-gray-100 focus:ring-gray-300';
+      return 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-300';
     case 'light-outline':
-      return 'border-2 border-white text-white hover:bg-gray-200 hover:text-gray-800 focus:ring-gray-300';
+      return 'border-2 border-gray-300 text-gray-300 hover:bg-gray-300 hover:text-gray-900 focus:ring-gray-300';
     case 'dark':
-      return 'bg-gray-800 text-white hover:bg-gray-900 focus:ring-gray-600';
+      return 'bg-gray-800 text-white hover:bg-gray-700 focus:ring-gray-600';
     case 'dark-outline':
-      return 'border-2 border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white focus:ring-gray-600';
+      return 'border-2 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white focus:ring-gray-600';
     default: // primary (solid)
       return 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500';
   }
@@ -61,7 +61,7 @@ const getButtonClassName = (
   className?: string
 ) => {
   const baseClassName = `px-4 py-2 font-semibold ${rounded} shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50`;
-  const disabledClassName = 'disabled:bg-gray-300 disabled:cursor-not-allowed';
+  const disabledClassName = 'disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed';
   const variantClassName = getVariantClassName(variant);
 
   return `${baseClassName} ${variantClassName} ${
@@ -76,7 +76,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   className = '',
   ariaLabel,
   title,
-  variant = 'primary', // Default variant
+  variant = 'primary',
   rounded = 'rounded-lg',
 }) => {
   return (

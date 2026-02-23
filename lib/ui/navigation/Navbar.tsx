@@ -1,31 +1,32 @@
-// /lib/ui/navigation/Navbar.tsx
-'use client'; // Use client for interactivity
+'use client';
 
-import Link from 'next/link';
-import { useState } from 'react';
+import { FaArrowsRotate } from 'react-icons/fa6';
 
 export default function Navbar() {
   return (
-    <header className="bg-blue-600 text-white p-4 shadow-md">
-      <div className="container mx-auto flex items-center justify-between">
-        {/* Logo linking to home */}
-        <Link href="/" className="text-2xl font-bold">
-          Revive
-        </Link>
+    <header className="bg-gray-900 text-white p-4 shadow-lg border-b border-gray-800">
+      <div className="flex items-center justify-between gap-4">
+        {/* Spacer for sidebar */}
+        <div className="w-0"></div>
 
-        {/* Centered Search Bar */}
-        <div className="flex-1 flex justify-center mx-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full max-w-md p-2 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+        {/* Page Title and Search */}
+        <div className="flex items-center justify-between flex-1 gap-6">
+          <h1 className="text-2xl font-semibold">Revive</h1>
+
+          {/* Search Bar */}
+          <div className="flex-1 flex justify-center max-w-md">
+            <input
+              type="text"
+              placeholder="Search resources..."
+              className="form-input"
+            />
+          </div>
         </div>
 
-        {/* Login Link */}
-        <Link href="/auth/login" className="text-white">
-          Login
-        </Link>
+        {/* Refresh Button */}
+        <button className="p-2 hover:bg-gray-800 rounded-lg transition">
+          <FaArrowsRotate className="text-xl" />
+        </button>
       </div>
     </header>
   );
