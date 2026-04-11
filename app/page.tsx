@@ -24,7 +24,7 @@ export default function Home() {
         const snapshotRes = await fetch('/api/snapshots');
 
         const instanceData = await instanceRes.json();
-        const snapshotData: Snapshot[] = []; // await snapshotRes.json();
+        const snapshotData: Snapshot[] = await snapshotRes.json();
         setInstances(instanceData || []);
         setSnapshots(snapshotData || []);
       } catch (error) {

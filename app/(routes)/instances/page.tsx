@@ -1,13 +1,12 @@
 'use client';
 
 import Copy from '@/lib/ui/icons/Copy';
-import Button from '@/lib/ui/buttons/Button';
 import StatusChip from '@/lib/ui/chips/StatusChips';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Instance } from '@aws-sdk/client-ec2';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaFilter, FaCircleExclamation } from 'react-icons/fa6';
+import { FaCircleExclamation } from 'react-icons/fa6';
 import ActionButton from './components/ActionButton';
 import { EC2Status, mapEC2StatusToVariant } from './utils';
 
@@ -142,7 +141,7 @@ const InstancesPage = () => {
               onClick={fetchInstances}
               className="text-red-200 text-sm underline hover:text-red-100 mt-2"
             >
-              Configure Credentials
+              Retry Connection
             </button>
           </div>
         </div>
@@ -156,13 +155,6 @@ const InstancesPage = () => {
             {instances.length} Active Resources
           </p>
         </div>
-        <Button
-          onClick={() => {}}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-        >
-          <FaFilter className="text-sm" />
-          Filter
-        </Button>
       </div>
 
       {/* Data Table */}

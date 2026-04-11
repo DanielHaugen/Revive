@@ -8,7 +8,7 @@ import { Volume } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaFilter, FaTrash } from 'react-icons/fa6';
+import { FaTrash } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import { VolumeState, mapVolumeStateToVariant } from './utils';
 
@@ -168,11 +168,6 @@ const VolumesPage = () => {
     <div className="container mx-auto py-4">
       <div className="flex mb-4">
         <h1 className="text-2xl font-semibold">EC2 Volumes</h1>
-        <Button onClick={() => {}} className="ml-auto">
-          <div className="flex items-center">
-            Filter <FaFilter className="ml-3" />
-          </div>
-        </Button>
       </div>
       {/* Pass the volumes and columns to the DataTable component */}
       <DataTable data={volumes} columns={columns} onRowClick={handleRowClick} />

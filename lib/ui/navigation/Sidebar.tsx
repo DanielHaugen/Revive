@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   FaBook,
@@ -29,6 +30,12 @@ type Route = {
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/auth/login?logout=1');
+  };
 
   const routes: Route[] = [
     {
@@ -56,7 +63,6 @@ export default function Sidebar() {
       links: [
         { href: '/settings', label: 'Settings', icon: FaGear },
         { href: '/settings/profile', label: 'User Profile', icon: FaUser },
-        { href: '/auth/logout', label: 'Logout', icon: FaPowerOff },
       ],
     },
   ];
@@ -91,6 +97,18 @@ export default function Sidebar() {
                     </Link>
                   </li>
                 ))}
+                {section.section === 'Settings' && (
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 hover:bg-gray-800 rounded-lg transition-colors duration-200 w-full text-left"
+                      title={isCollapsed ? 'Logout' : ''}
+                    >
+                      <FaPowerOff className="text-base flex-shrink-0" />
+                      {!isCollapsed && <span>Logout</span>}
+                    </button>
+                  </li>
+                )}
               </ul>
             </div>
           ))}

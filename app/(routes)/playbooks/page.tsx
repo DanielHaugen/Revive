@@ -203,7 +203,7 @@ const PlaybooksPage = () => {
         <div className="inline-flex rounded-md shadow-md ml-2" role="group">
           <button
             type="button"
-            className="px-4 py-2 text-sm font-medium text-white bg-gray-900 border rounded-s-lg border-gray-200 hover:bg-blue-600 hover:text-white focus:z-10 duration-200"
+            className="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-s-lg hover:bg-blue-600 hover:text-white focus:z-10 duration-200"
             onClick={() => toast.info('Importing not yet implemented')}
             title="Import Playbooks"
           >
@@ -211,7 +211,7 @@ const PlaybooksPage = () => {
           </button>
           <button
             type="button"
-            className="px-4 py-2 text-sm font-medium text-white bg-gray-900 border rounded-e-lg border-gray-200 hover:bg-blue-600 hover:text-white focus:z-10 duration-200"
+            className="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-e-lg hover:bg-blue-600 hover:text-white focus:z-10 duration-200"
             onClick={() => toast.info('Exporting not yet implemented')}
             title="Export Playbooks"
           >

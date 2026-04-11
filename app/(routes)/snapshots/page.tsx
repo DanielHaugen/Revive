@@ -2,13 +2,11 @@
 
 import StatusChip from '@/lib/ui/chips/StatusChips';
 import Copy from '@/lib/ui/icons/Copy';
-import Button from '@/lib/ui/buttons/Button';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Snapshot } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaFilter } from 'react-icons/fa6';
 import { SnapshotState, mapSnapshotStateToVariant } from './utils';
 
 const columns: Column<Snapshot>[] = [
@@ -116,11 +114,6 @@ const SnapshotsPage = () => {
     <div className="container mx-auto py-4">
       <div className="flex mb-4">
         <h1 className="text-2xl font-semibold">EC2 Snapshots</h1>
-        <Button onClick={() => {}} className="ml-auto">
-          <div className="flex items-center">
-            Filter <FaFilter className="ml-3" />
-          </div>
-        </Button>
       </div>
       <DataTable
         data={snapshots}

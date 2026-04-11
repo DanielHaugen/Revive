@@ -56,22 +56,22 @@ const EditPlaybookPage = () => {
   const onSubmit = async () => {
     // Validate and submit the data
     try {
-      const response = await fetch('/api/playbooks/edit', {
+      const response = await fetch(`/api/playbooks/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create playbook');
+        throw new Error('Failed to update playbook');
       }
 
       const playbook = await response.json();
-      toast.success(`Created Playbook: '${playbook.name}'`);
-      router.push(`/playbooks/${id}/edit`);
+      toast.success(`Updated Playbook: '${playbook.name}'`);
+      router.push(`/playbooks/${id}`);
     } catch (error) {
-      console.error('Error creating playbook:', error);
-      toast.error('Failed to create playbook. Please try again.');
+      console.error('Error updating playbook:', error);
+      toast.error('Failed to update playbook. Please try again.');
     }
   };
 
