@@ -14,14 +14,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Instance {
-  id        String   @id @default(uuid())
-  name      String
-  type      String
-  status    String
-  createdAt DateTime @default(now())
-}
-
 model User {
   id        Int      @id @default(autoincrement()) // User ID
   email     String   @unique

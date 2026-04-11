@@ -1,10 +1,8 @@
 import {
   DeleteVolumeCommand,
   DeleteVolumeCommandOutput,
-  EC2Client,
 } from '@aws-sdk/client-ec2';
-
-const ec2Client = new EC2Client({ region: 'us-east-1' });
+import { ec2Client } from '@/lib/services/aws';
 
 /**
  * Deletes one or more volumes by ID(s).
@@ -32,8 +30,6 @@ export async function deleteVolume(
 
     // Wait for all deletions to complete
     await Promise.all(deletePromises);
-
-    console.log(`Volumes ${ids.join(', ')} deleted successfully`);
   } catch (error) {
     // Narrow error type
     if (error instanceof Error) {

@@ -31,20 +31,15 @@ const EditPlaybookPage = () => {
           );
         }
         const data = await response.json();
-        console.log('data', data);
         const { steps, ...play } = data.playbook;
         setPlaybook(play);
         setSteps(steps);
-        console.log('playbook', playbook);
-        console.log('data.playbook', data.playbook);
         if (play != null) {
           let form: PlaybookData = {
             name: play.name,
             description: play.description,
             steps: steps,
           };
-          console.log('form:', form);
-          console.log('steps:', steps);
           setFormData(form);
         }
       } catch (error) {

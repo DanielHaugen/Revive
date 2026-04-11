@@ -3,7 +3,11 @@ import bcrypt from 'bcrypt';
 import prisma from '@/lib/prisma'; // Assume you are using Prisma for DB interaction
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; // Make sure to use a secure key
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
+const JWT_SECRET: string = process.env.JWT_SECRET;
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();
@@ -16,12 +20,14 @@ export async function POST(req: Request) {
   }
 
   try {
-    // Fetch the user from the database
+    console.info(`[login] Attempting login for: ${email}`);
+
     const user = await prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
+      console.warn(`[login] User not found: ${email}`);
       return NextResponse.json({ message: 'User not found.' }, { status: 404 });
     }
 
@@ -29,6 +35,7 @@ export async function POST(req: Request) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
+      console.warn(`[login] Invalid password for: ${email}`);
       return NextResponse.json(
         { message: 'Invalid password.' },
         { status: 401 }
@@ -40,6 +47,7 @@ export async function POST(req: Request) {
       expiresIn: '1h', // Token expiration time (optional)
     });
 
+    console.info(`[login] Successful login for: ${email}`);
     // Set token as a secure, httpOnly cookie
     const response = NextResponse.json(
       { message: 'Login successful' },
@@ -56,7 +64,7 @@ export async function POST(req: Request) {
     // Respond with the token or a success message
     return response;
   } catch (error) {
-    console.log(error);
+    console.error('[login] Unexpected error:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

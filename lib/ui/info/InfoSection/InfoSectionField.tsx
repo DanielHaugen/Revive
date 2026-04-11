@@ -11,7 +11,6 @@ export const InfoSectionField: FC<InfoSectionFieldProps> = ({
   className,
   ...props
 }) => {
-  console.log('key:', label);
   return (
     <div className={twMerge('flex flex-col', className)} {...props}>
       <span className="font-semibold">{label}</span>

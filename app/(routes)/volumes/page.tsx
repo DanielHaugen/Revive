@@ -1,9 +1,9 @@
 'use client';
 
 import Copy from '@/lib/ui/icons/Copy';
-import Button from '@/ui/buttons/Button';
-import StatusChip from '@/ui/chips/StatusChips';
-import DataTable, { Column } from '@/ui/tables/DataTable';
+import Button from '@/lib/ui/buttons/Button';
+import StatusChip from '@/lib/ui/chips/StatusChips';
+import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Volume } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -49,7 +49,6 @@ const VolumesPage = () => {
     {
       header: 'Size',
       accessor: (item) => {
-        console.log(item);
         return <span>{item.Size} GB</span>;
       },
       render: (value) => <span>{value as string}</span>,
@@ -113,7 +112,6 @@ const VolumesPage = () => {
         );
       } finally {
         setLoading(false); // Set loading to false once the request is complete
-        console.log(volumes);
       }
     };
 

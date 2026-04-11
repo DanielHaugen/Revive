@@ -1,6 +1,5 @@
-import { PrismaClient, Target } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { Target } from '@prisma/client';
+import prisma from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
@@ -24,7 +23,6 @@ export async function POST(req: Request) {
             type: step.type,
             targets: {
               create: step.targets.map((target: Target) => {
-                console.log('Target: ', target);
                 // TODO: Target is currently just the `instanceId`
                 const {
                   instanceId,

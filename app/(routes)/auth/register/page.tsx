@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import PasswordStrengthIndicator from '@/ui/auth/PasswordStrengthIndicator';
-import PasswordRequirements from '@/ui/auth/PasswordRequirements';
+import PasswordStrengthIndicator from '@/lib/ui/auth/PasswordStrengthIndicator';
+import PasswordRequirements from '@/lib/ui/auth/PasswordRequirements';
 import Link from 'next/link';
 
 export default function RegisterPage() {

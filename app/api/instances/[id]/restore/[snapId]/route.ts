@@ -1,5 +1,4 @@
 import {
-  EC2Client,
   StopInstancesCommand,
   DescribeInstancesCommand,
   CreateVolumeCommand,
@@ -11,12 +10,9 @@ import {
   waitUntilVolumeInUse,
   DescribeVolumesCommand,
 } from '@aws-sdk/client-ec2';
+import { ec2Client } from '@/lib/services/aws';
 
-const ec2Client = new EC2Client({
-  region: process.env.AWS_REGION || 'us-east-1',
-});
-
-export async function GET(
+export async function POST(
   request: Request,
   { params }: { params: { id: string; snapId: string } }
 ) {

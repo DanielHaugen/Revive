@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient, Target } from '@prisma/client';
+import { Target } from '@prisma/client';
 import { startInstances, stopInstances } from '@/app/api/instances/api';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 // POST /api/playbooks/[id]/run
 export async function POST(
@@ -88,14 +87,13 @@ const handleStopInstances = async (targets: Target[]) => {
   try {
     await stopInstances(ids);
   } catch (error) {
-    console.error('Error starting instance', error);
+    console.error('Error stopping instance', error);
   }
 };
 
 // Example: Handle restoring instances
 const handleRestoreInstances = async (targets: Target[]) => {
   for (const target of targets) {
-    console.log(`Restoring instance from snapshot: ${target.snapshotId}`);
     // TODO: Add AWS SDK logic to restore instance from snapshot
   }
 };

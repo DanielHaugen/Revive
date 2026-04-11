@@ -2,12 +2,8 @@ import {
   DescribeSnapshotsCommand,
   DescribeSnapshotsCommandInput,
   DescribeSnapshotsCommandOutput,
-  EC2Client,
 } from '@aws-sdk/client-ec2';
-
-const ec2Client = new EC2Client({
-  region: process.env.AWS_REGION || 'us-east-1',
-});
+import { ec2Client } from '@/lib/services/aws';
 
 export async function fetchSnapshots(snapshotId?: string) {
   const snapshots: DescribeSnapshotsCommandOutput['Snapshots'] = [];

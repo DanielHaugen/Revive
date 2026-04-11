@@ -1,24 +1,28 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import prisma from '@/lib/prisma'; // Adjust path if necessary
+import prisma from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 
 export async function POST(req: Request) {
-  const { email, password, firstName, lastName } = await req.json();
-
-  if (!email || !password) {
-    return NextResponse.json(
-      { message: 'Email and password are required.' },
-      { status: 400 }
-    );
-  }
+  let email: string | undefined;
 
   try {
-    // Hash the password before storing it
+    const body = await req.json();
+    email = body.email;
+    const { password, firstName, lastName } = body;
+
+    if (!email || !password) {
+      return NextResponse.json(
+        { message: 'Email and password are required.' },
+        { status: 400 }
+      );
+    }
+
+    console.info(`[register] Attempting to register user: ${email}`);
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the user in the database
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
@@ -27,6 +31,7 @@ export async function POST(req: Request) {
       },
     });
 
+    console.info(`[register] Successfully registered user: ${email}`);
     return NextResponse.json(
       { message: 'User created successfully.' },
       { status: 201 }
@@ -34,12 +39,17 @@ export async function POST(req: Request) {
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
-        // Handle unique constraint violation (e.g., duplicate email)
+        console.warn(`[register] Duplicate email attempt: ${email}`);
         return NextResponse.json(
           { message: 'Email already exists.' },
           { status: 409 }
         );
       }
+      console.error(`[register] Prisma known error (${error.code}):`, error.message);
+    } else if (error instanceof Prisma.PrismaClientInitializationError) {
+      console.error('[register] Prisma failed to connect to database:', error.message);
+    } else {
+      console.error('[register] Unexpected error:', error);
     }
     return NextResponse.json(
       { message: 'Internal server error.' },

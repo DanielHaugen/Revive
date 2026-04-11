@@ -1,14 +1,10 @@
 import { NextResponse } from 'next/server';
 import {
-  EC2Client,
   DescribeVolumesCommand,
   DescribeVolumesCommandInput,
   DescribeVolumesCommandOutput,
 } from '@aws-sdk/client-ec2';
-
-const ec2Client = new EC2Client({
-  region: process.env.AWS_REGION || 'us-east-1',
-});
+import { ec2Client } from '@/lib/services/aws';
 
 export async function GET() {
   try {

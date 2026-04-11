@@ -2,7 +2,7 @@
 
 import { StepWithTargets } from '@/lib/types';
 import Card from '@/lib/ui/card/Card';
-import Button from '@/ui/buttons/Button';
+import Button from '@/lib/ui/buttons/Button';
 import { Playbook } from '@prisma/client';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -26,7 +26,6 @@ const PlaybookDetailsPage = () => {
           );
         }
         const data = await response.json();
-        console.log(data);
         setPlaybook(data.playbook);
         setSteps(data.playbook.steps);
       } catch (error) {

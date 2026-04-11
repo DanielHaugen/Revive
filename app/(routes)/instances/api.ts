@@ -30,7 +30,7 @@ export async function stopInstance(instanceIds: string | string[]) {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to start the instance(s)');
+    throw new Error('Failed to stop the instance(s)');
   }
 
   return response.json();

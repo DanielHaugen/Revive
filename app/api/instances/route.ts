@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
-import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
-
-// Set up the EC2 client using system AWS profile credentials
-const ec2Client = new EC2Client({
-  region: process.env.AWS_REGION || 'us-east-1',
-});
+import { DescribeInstancesCommand } from '@aws-sdk/client-ec2';
+import { ec2Client } from '@/lib/services/aws';
 
 export async function GET() {
   try {

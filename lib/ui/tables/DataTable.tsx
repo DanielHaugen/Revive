@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 export type Column<T> = {
   header: string;
-  accessor: keyof T | ((item: T) => React.ReactNode); // Allow function-based accessors
+  accessor: keyof T | ((item: T) => React.ReactNode);
   render?: (
     value: T[keyof T] | React.ReactNode,
     row: T
-  ) => React.ReactNode | Promise<React.ReactNode>; // Optionally pass the whole item to render
+  ) => React.ReactNode;
 };
 
 type DataTableProps<T> = {
@@ -86,7 +86,7 @@ function DataTable<T>({
           {sortedData.length === 0 ? (
             <tr>
               <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500">
-                No instances found in this region.
+                No data found.
               </td>
             </tr>
           ) : (
@@ -108,22 +108,6 @@ function DataTable<T>({
                   const renderValue = column.render
                     ? column.render(cellValue, row)
                     : renderDefault(cellValue);
-
-                  // If the render value is a promise, resolve it
-                  if (renderValue instanceof Promise) {
-                    const [resolvedValue, setResolvedValue] =
-                      useState<React.ReactNode | null>(null);
-
-                    useEffect(() => {
-                      renderValue.then((resolved) => setResolvedValue(resolved));
-                    }, [renderValue]);
-
-                    return (
-                      <td key={String(column.header)} className="px-6 py-3 text-sm text-gray-300">
-                        {resolvedValue}
-                      </td>
-                    );
-                  }
 
                   return (
                     <td key={String(column.header)} className="px-6 py-3 text-sm text-gray-300">

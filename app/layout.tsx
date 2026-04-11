@@ -38,7 +38,7 @@ export default function RootLayout({
               </div>
             </main>
 
-            <ToastContainer position="bottom-right" />
+            <ToastContainer position="bottom-right" theme="dark" />
           </div>
         </div>
       </body>

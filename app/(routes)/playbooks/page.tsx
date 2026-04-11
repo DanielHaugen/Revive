@@ -2,7 +2,7 @@
 
 import Card from '@/lib/ui/card/Card';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
-import Button from '@/ui/buttons/Button';
+import Button from '@/lib/ui/buttons/Button';
 import { Playbook } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

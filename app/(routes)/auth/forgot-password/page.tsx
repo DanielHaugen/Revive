@@ -17,7 +17,6 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
     if (validateEmail(email)) {
       // Simulate an API request to send reset link
-      console.log('Requesting password reset for:', email);
       setSubmitted(true);
     } else {
       setEmailValid(false);

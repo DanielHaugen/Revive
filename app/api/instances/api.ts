@@ -1,15 +1,10 @@
 import {
   DescribeInstancesCommand,
-  EC2Client,
   StartInstancesCommand,
   StopInstancesCommand,
 } from '@aws-sdk/client-ec2';
 import { NextResponse } from 'next/server';
-
-// Initialize the EC2 client
-const ec2Client = new EC2Client({
-  region: process.env.AWS_REGION || 'us-east-1',
-}); // Update with your AWS region
+import { ec2Client } from '@/lib/services/aws';
 
 // Function to fetch instance IDs based on the wildcard '*' or return provided instance IDs
 async function getInstanceIds(

@@ -1,7 +1,6 @@
-import { CreateTagsCommand, EC2Client } from '@aws-sdk/client-ec2';
+import { CreateTagsCommand } from '@aws-sdk/client-ec2';
 import { NextResponse } from 'next/server';
-
-const ec2Client = new EC2Client({ region: process.env.AWS_REGION });
+import { ec2Client } from '@/lib/services/aws';
 
 export async function POST(
   req: Request,

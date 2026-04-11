@@ -25,7 +25,6 @@ export default function Home() {
 
         const instanceData = await instanceRes.json();
         const snapshotData: Snapshot[] = []; // await snapshotRes.json();
-        console.log(instanceRes);
         setInstances(instanceData || []);
         setSnapshots(snapshotData || []);
       } catch (error) {

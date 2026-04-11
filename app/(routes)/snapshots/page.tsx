@@ -2,8 +2,8 @@
 
 import StatusChip from '@/lib/ui/chips/StatusChips';
 import Copy from '@/lib/ui/icons/Copy';
-import Button from '@/ui/buttons/Button';
-import DataTable, { Column } from '@/ui/tables/DataTable';
+import Button from '@/lib/ui/buttons/Button';
+import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Snapshot } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

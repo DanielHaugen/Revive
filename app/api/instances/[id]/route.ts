@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
-import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
-
-// Initialize the EC2 client
-const ec2Client = new EC2Client({ region: 'us-east-1' }); // Update with your AWS region
+import { DescribeInstancesCommand } from '@aws-sdk/client-ec2';
+import { ec2Client } from '@/lib/services/aws';
 
 export async function GET(
   request: Request,

@@ -1,8 +1,8 @@
 'use client';
 
 import Card from '@/lib/ui/card/Card';
-import Button from '@/ui/buttons/Button';
-import SearchDropdown from '@/ui/inputs/SearchableDropdown';
+import Button from '@/lib/ui/buttons/Button';
+import SearchDropdown from '@/lib/ui/inputs/SearchableDropdown';
 import { Instance, Snapshot } from '@aws-sdk/client-ec2';
 import { useEffect, useState } from 'react';
 import { FaRotateRight } from 'react-icons/fa6';
@@ -53,49 +53,48 @@ const RestorationPage = () => {
   }, [selectedInstance]);
 
   // Handle the restore button click
-  const handleRestore = () => {
+  const handleRestore = async () => {
     if (!selectedInstance || !selectedSnapshot) return;
 
     setProgress(''); // Clear previous progress
     setIsRestoring(true);
     toast.info('Starting restoration process...');
 
-    const eventSource = new EventSource(
-      `/api/instances/${selectedInstance}/restore/${selectedSnapshot}`
-    );
+    try {
+      const response = await fetch(
+        `/api/instances/${selectedInstance}/restore/${selectedSnapshot}`,
+        { method: 'POST' }
+      );
 
-    // Handle incoming messages
-    eventSource.onmessage = (event) => {
-      //   console.log(eventSource);
-      if (event.data === 'DONE') {
-        // Close the connection when restoration is complete
-        eventSource.close();
-        setIsRestoring(false);
-        toast.success('Restoration process completed.');
-      } else {
-        // Append progress messages
-        setProgress((prev) => `${prev}\n${event.data}`);
+      if (!response.ok || !response.body) {
+        throw new Error('Failed to start restoration');
       }
-    };
 
-    // Handle errors and connection closure
-    eventSource.onerror = (error) => {
-      if (
-        error.target instanceof EventSource &&
-        error.target.readyState === EventSource.CLOSED
-      ) {
-        // This is a normal close event, so no action needed
-        console.log('SSE connection closed gracefully.');
-        toast.success('Restoration process completed.');
-      } else {
-        // Handle unexpected errors
-        console.error('SSE connection error:', error);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
 
-        toast.error('Error during restoration process.');
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const text = decoder.decode(value, { stream: true });
+        const lines = text.split('\n\n');
+        for (const line of lines) {
+          const message = line.replace(/^data: /, '').trim();
+          if (!message) continue;
+          if (message === 'DONE') {
+            toast.success('Restoration process completed.');
+          } else {
+            setProgress((prev) => `${prev}\n${message}`);
+          }
+        }
       }
+    } catch (error) {
+      console.error('Restoration error:', error);
+      toast.error('Error during restoration process.');
+    } finally {
       setIsRestoring(false);
-      eventSource.close(); // Always close the connection
-    };
+    }
   };
 
   return (
