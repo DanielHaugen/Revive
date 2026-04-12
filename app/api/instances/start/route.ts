@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server';
 import { startInstances } from '@/lib/services/instances';
+import { validateBody } from '@/lib/validation/helpers';
+import { instanceIdsSchema } from '@/lib/validation/schemas';
 
 export async function POST(request: Request) {
-  const { instanceIds }: { instanceIds: string[] } = await request.json();
-
-  if (!Array.isArray(instanceIds) || instanceIds.length === 0) {
-    return NextResponse.json(
-      { error: 'Instance IDs are required and must be a non-empty array.' },
-      { status: 400 }
-    );
-  }
+  const result = await validateBody(request, instanceIdsSchema);
+  if (result.error) return result.error;
+  const { instanceIds } = result.data;
 
   try {
     const result = await startInstances(instanceIds);

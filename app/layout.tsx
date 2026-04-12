@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Sidebar from '@/lib/ui/navigation/Sidebar';
 import Navbar from '@/lib/ui/navigation/Navbar';
+import Providers from './providers';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -23,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gray-950 text-gray-100 h-screen overflow-hidden`}>
+        <Providers>
         <div className="flex h-screen flex-col">
           {/* Header */}
           <Navbar />
@@ -41,6 +43,7 @@ export default function RootLayout({
             <ToastContainer position="bottom-right" theme="dark" />
           </div>
         </div>
+        </Providers>
       </body>
     </html>
   );

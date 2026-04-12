@@ -11,19 +11,29 @@ import {
   DescribeVolumesCommand,
 } from '@aws-sdk/client-ec2';
 import { ec2Client } from '@/lib/services/aws';
+import { awsInstanceIdSchema, awsSnapshotIdSchema } from '@/lib/validation/schemas';
 
 export async function POST(
   request: Request,
   { params }: { params: { id: string; snapId: string } }
 ) {
+  const idResult = awsInstanceIdSchema.safeParse(params.id);
+  const snapResult = awsSnapshotIdSchema.safeParse(params.snapId);
+  if (!idResult.success || !snapResult.success) {
+    return new Response(JSON.stringify({ error: 'Invalid instance or snapshot ID' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const stream = new ReadableStream({
     async start(controller) {
       const sendProgress = (message: string) => {
         controller.enqueue(`data: ${message}\n\n`);
       };
 
-      const instanceId = params.id;
-      const snapshotId = params.snapId;
+      const instanceId = idResult.data;
+      const snapshotId = snapResult.data;
 
       try {
         // Step 1: Stop the instance

@@ -1,14 +1,20 @@
 import { NextResponse } from 'next/server';
 import { tagSnapshot } from '@/lib/services/snapshots';
+import { validateBody, validateParam } from '@/lib/validation/helpers';
+import { awsSnapshotIdSchema, snapshotTagsSchema } from '@/lib/validation/schemas';
 
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const { tags } = await req.json();
+  const paramResult = validateParam(params.id, awsSnapshotIdSchema);
+  if (paramResult.error) return paramResult.error;
+
+  const bodyResult = await validateBody(req, snapshotTagsSchema);
+  if (bodyResult.error) return bodyResult.error;
 
   try {
-    await tagSnapshot(params.id, tags);
+    await tagSnapshot(paramResult.data, bodyResult.data.tags);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error tagging snapshot:', error);

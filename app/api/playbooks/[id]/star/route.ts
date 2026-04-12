@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
 import { togglePlaybookStar } from '@/lib/services/playbooks';
+import { validateParam } from '@/lib/validation/helpers';
+import { playbookIdSchema } from '@/lib/validation/schemas';
 
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const playbookId = parseInt(params.id, 10);
-  if (isNaN(playbookId)) {
-    return NextResponse.json({ error: 'Invalid playbook ID' }, { status: 400 });
-  }
+  const v = validateParam(params.id, playbookIdSchema);
+  if (v.error) return v.error;
 
   try {
-    const playbook = await togglePlaybookStar(playbookId);
+    const playbook = await togglePlaybookStar(v.data);
 
     if (!playbook) {
       return NextResponse.json(

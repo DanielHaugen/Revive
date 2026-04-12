@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server';
 import { stopInstances } from '@/lib/services/instances';
+import { validateParam } from '@/lib/validation/helpers';
+import { awsInstanceIdSchema } from '@/lib/validation/schemas';
 
 export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const v = validateParam(params.id, awsInstanceIdSchema);
+  if (v.error) return v.error;
+
   try {
-    const result = await stopInstances(params.id);
+    const result = await stopInstances(v.data);
     return NextResponse.json({
       message: `Instance stopping: ${params.id}`,
       data: result.stoppingInstances,

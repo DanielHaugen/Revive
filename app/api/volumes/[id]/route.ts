@@ -1,23 +1,19 @@
 import { NextResponse } from 'next/server';
 import { deleteVolumes } from '@/lib/services/volumes';
+import { validateParam } from '@/lib/validation/helpers';
+import { awsVolumeIdSchema } from '@/lib/validation/schemas';
 
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
-
-  if (!id) {
-    return NextResponse.json(
-      { error: 'Volume ID is required' },
-      { status: 400 }
-    );
-  }
+  const v = validateParam(params.id, awsVolumeIdSchema);
+  if (v.error) return v.error;
 
   try {
-    await deleteVolumes(id);
+    await deleteVolumes(v.data);
     return NextResponse.json({
-      message: `Volume ${id} deleted successfully`,
+      message: `Volume ${v.data} deleted successfully`,
     });
   } catch (error) {
     console.error('Error deleting volume:', error);
@@ -26,5 +22,4 @@ export async function DELETE(
       { status: 500 }
     );
   }
-}
 }

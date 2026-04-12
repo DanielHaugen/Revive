@@ -4,10 +4,12 @@ import {
   deletePlaybook,
   updatePlaybook,
 } from '@/lib/services/playbooks';
+import { validateBody } from '@/lib/validation/helpers';
+import { playbookIdSchema, playbookBodySchema } from '@/lib/validation/schemas';
 
 function parsePlaybookId(id: string) {
-  const parsed = parseInt(id, 10);
-  return isNaN(parsed) ? null : parsed;
+  const result = playbookIdSchema.safeParse(id);
+  return result.success ? result.data : null;
 }
 
 export async function GET(
@@ -65,11 +67,9 @@ export async function PUT(
   }
 
   try {
-    const { name, description, steps } = await req.json();
-
-    if (!name || !description || !steps || !Array.isArray(steps)) {
-      return NextResponse.json({ error: 'Invalid input data' }, { status: 400 });
-    }
+    const result = await validateBody(req, playbookBodySchema);
+    if (result.error) return result.error;
+    const { name, description, steps } = result.data;
 
     const playbook = await updatePlaybook(playbookId, { name, description, steps });
     return NextResponse.json(playbook);

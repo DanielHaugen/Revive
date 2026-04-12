@@ -1,5 +1,26 @@
 import prisma from '@/lib/prisma';
 import { Target } from '@prisma/client';
+import { startInstances, stopInstances } from '@/lib/services/instances';
+
+/** Input shape for a target when creating/updating a playbook. */
+type TargetInput = {
+  instanceId: string;
+  instanceName?: string | null;
+  availabilityZone?: string | null;
+  snapshotId?: string | null;
+  snapshotName?: string | null;
+};
+
+type StepInput = {
+  type: string;
+  targets: (TargetInput | string)[];
+};
+
+type PlaybookInput = {
+  name: string;
+  description: string;
+  steps: StepInput[];
+};
 
 /** List all playbooks with steps and targets. */
 export async function listPlaybooks() {
@@ -21,11 +42,7 @@ export async function getPlaybook(id: number) {
 }
 
 /** Create a new playbook with steps and targets. */
-export async function createPlaybook(data: {
-  name: string;
-  description: string;
-  steps: { type: string; targets: (Target | string)[] }[];
-}) {
+export async function createPlaybook(data: PlaybookInput) {
   return prisma.playbook.create({
     data: {
       name: data.name,
@@ -56,11 +73,7 @@ export async function createPlaybook(data: {
 /** Update a playbook. Deletes existing steps and recreates them. */
 export async function updatePlaybook(
   id: number,
-  data: {
-    name: string;
-    description: string;
-    steps: { type: string; targets: (Target | string)[] }[];
-  }
+  data: PlaybookInput
 ) {
   await prisma.step.deleteMany({ where: { playbookId: id } });
 
@@ -109,4 +122,29 @@ export async function togglePlaybookStar(id: number) {
     where: { id },
     data: { starred: !playbook.starred },
   });
+}
+
+/** Execute a playbook's steps in order. */
+export async function runPlaybook(id: number) {
+  const playbook = await getPlaybook(id);
+  if (!playbook) return null;
+
+  for (const step of playbook.steps) {
+    const ids = step.targets.map((t: Target) => t.instanceId);
+    switch (step.type) {
+      case 'start-instances':
+        await startInstances(ids);
+        break;
+      case 'stop-instances':
+        await stopInstances(ids);
+        break;
+      case 'restore-instances':
+        // TODO: Add restore logic
+        break;
+      default:
+        console.warn(`Unhandled step type: ${step.type}`);
+    }
+  }
+
+  return playbook;
 }

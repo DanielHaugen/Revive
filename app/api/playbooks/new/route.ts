@@ -1,17 +1,13 @@
 import { NextResponse } from 'next/server';
 import { createPlaybook } from '@/lib/services/playbooks';
+import { validateBody } from '@/lib/validation/helpers';
+import { playbookBodySchema } from '@/lib/validation/schemas';
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { name, description, steps } = body;
-
-    if (!name || !description || !steps || !Array.isArray(steps)) {
-      return NextResponse.json(
-        { error: 'Invalid input data' },
-        { status: 400 }
-      );
-    }
+    const result = await validateBody(req, playbookBodySchema);
+    if (result.error) return result.error;
+    const { name, description, steps } = result.data;
 
     const playbook = await createPlaybook({ name, description, steps });
     return NextResponse.json(playbook, { status: 201 });
