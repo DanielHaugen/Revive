@@ -6,7 +6,7 @@ import Button from '@/lib/ui/buttons/Button';
 import ConfirmationModal from '@/lib/ui/modals/ConfirmationModal';
 import { Playbook } from '@prisma/client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   FaArrowUpFromBracket,
   FaChevronDown,
@@ -19,33 +19,19 @@ import {
   FaTrash,
 } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
+import { usePlaybooks } from '@/lib/hooks/usePlaybooks';
+import { useQueryClient } from '@tanstack/react-query';
 
 const PlaybooksPage = () => {
   const [showStarred, setShowStarred] = useState<boolean>(true);
   const [showAll, setShowAll] = useState<boolean>(true);
-  const [playbooks, setPlaybooks] = useState<Playbook[]>([]); // State to store fetched playbooks
-  const [loading, setLoading] = useState<boolean>(true);
+  const { data: playbooks = [], isLoading } = usePlaybooks();
   const [runningPlaybookId, setRunningPlaybookId] = useState<number | null>(
     null
-  ); // ID of the running playbook
+  );
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const queryClient = useQueryClient();
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchPlaybooks = async () => {
-      try {
-        const response = await fetch('/api/playbooks');
-        const data = await response.json();
-        setPlaybooks(data);
-      } catch (error) {
-        console.error('Error fetching playbooks:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlaybooks();
-  }, []);
 
   const columns: Column<Playbook>[] = [
     {
@@ -120,9 +106,7 @@ const PlaybooksPage = () => {
 
       if (response.ok) {
         const updatedPlaybook: Playbook = await response.json();
-        setPlaybooks((prev) =>
-          prev.map((p) => (p.id === updatedPlaybook.id ? updatedPlaybook : p))
-        );
+        queryClient.invalidateQueries({ queryKey: ['playbooks'] });
         toast.success(
           `${updatedPlaybook.starred ? 'Starred' : 'Unstarred'} playbook "${
             playbook.name
@@ -180,7 +164,7 @@ const PlaybooksPage = () => {
       });
 
       if (response.ok) {
-        setPlaybooks((prev) => prev.filter((p) => p.id !== playbookId));
+        queryClient.invalidateQueries({ queryKey: ['playbooks'] });
         toast.success('Playbook deleted successfully.');
       } else {
         const error = await response.json();
@@ -270,7 +254,7 @@ const PlaybooksPage = () => {
         </div>
         {showAll && (
           <>
-            {loading ? (
+            {isLoading ? (
               <Card>
                 <p className="text-center">Loading playbooks...</p>
               </Card>

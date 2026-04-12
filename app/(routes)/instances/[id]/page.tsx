@@ -6,19 +6,19 @@ import StatusChip from '@/lib/ui/chips/StatusChips';
 import Copy from '@/lib/ui/icons/Copy';
 import { InfoSection } from '@/lib/ui/info/InfoSection/InfoSection';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
-import { Instance, InstanceBlockDeviceMapping } from '@aws-sdk/client-ec2';
+import { InstanceBlockDeviceMapping } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import ActionButton from '../components/ActionButton';
 import { mapEC2StatusToVariant } from '@/lib/constants/status';
-
-const REFRESH_INTERVAL_MS = 10 * 1000;
+import { useInstance } from '@/lib/hooks/useInstances';
+import { useQueryClient } from '@tanstack/react-query';
 
 const InstanceDetailsPage = () => {
   const { id } = useParams();
-  const [instance, setInstance] = useState<Instance | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: instance, isLoading } = useInstance(id as string);
+  const queryClient = useQueryClient();
+  const refetch = () => queryClient.invalidateQueries({ queryKey: ['instances', id] });
 
   const columns: Column<InstanceBlockDeviceMapping>[] = [
     { header: 'Device Name', accessor: 'DeviceName' },
@@ -44,33 +44,7 @@ const InstanceDetailsPage = () => {
     },
   ];
 
-  // Fetch instance details from an API or mock data
-  const fetchData = async () => {
-    try {
-      // Replace this URL with your actual API endpoint
-      const response = await fetch(`/api/instances/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch instance data');
-
-      const data: Instance = await response.json();
-      setInstance(data);
-    } catch (error) {
-      console.error('Error fetching instance:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-
-    // Set up the interval to fetch instances every `n` seconds (e.g., every 10 seconds)
-    const intervalId = setInterval(fetchData, REFRESH_INTERVAL_MS); // 10000ms = 10 seconds
-
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -95,7 +69,7 @@ const InstanceDetailsPage = () => {
         <ActionButton
           instance={instance}
           className="py-3"
-          onClick={() => fetchData()}
+          onClick={refetch}
         />
       </div>
 

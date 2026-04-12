@@ -4,11 +4,10 @@ import Card from '@/lib/ui/card/Card';
 import { InfoSection } from '@/lib/ui/info/InfoSection/InfoSection';
 import LinkSnapshotModal from '@/lib/ui/modals/LinkSnapshotsModal';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
-import { Snapshot, Tag } from '@aws-sdk/client-ec2';
+import { Tag } from '@aws-sdk/client-ec2';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-
-const REFRESH_INTERVAL_MS = 10 * 1000;
+import { useState } from 'react';
+import { useSnapshot } from '@/lib/hooks/useSnapshots';
 
 const tagsColumns: Column<Tag>[] = [
   { header: 'Key', accessor: 'Key' },
@@ -17,31 +16,8 @@ const tagsColumns: Column<Tag>[] = [
 
 const SnapshotDetailsPage = () => {
   const { id } = useParams();
-  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: snapshot } = useSnapshot(id as string);
   const [isModalOpen, setModalOpen] = useState(false);
-
-  // Fetch snapshot details from an API
-  const fetchData = async () => {
-    try {
-      const response = await fetch(`/api/snapshots/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch snapshot data');
-
-      const data: Snapshot = await response.json();
-      setSnapshot(data);
-    } catch (error) {
-      console.error('Error fetching snapshot:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-
-    const intervalId = setInterval(fetchData, REFRESH_INTERVAL_MS);
-    return () => clearInterval(intervalId);
-  }, [id]);
 
   return (
     <main>

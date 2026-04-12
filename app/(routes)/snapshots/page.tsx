@@ -6,8 +6,8 @@ import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Snapshot } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { SnapshotState, mapSnapshotStateToVariant } from '@/lib/constants/status';
+import { useSnapshots } from '@/lib/hooks/useSnapshots';
 
 const columns: Column<Snapshot>[] = [
   {
@@ -62,39 +62,15 @@ const columns: Column<Snapshot>[] = [
 ];
 
 const SnapshotsPage = () => {
-  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: snapshots = [], isLoading, error } = useSnapshots();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchSnapshots = async () => {
-      try {
-        const response = await fetch('/api/snapshots');
-        if (!response.ok) {
-          throw new Error('Failed to fetch snapshots');
-        }
-        const data = await response.json();
-        setSnapshots(data);
-      } catch (err) {
-        setError(
-          'Error fetching snapshots: ' +
-            (err instanceof Error ? err.message : 'Unknown error')
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSnapshots();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div>Loading snapshots...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>{error.message}</div>;
   }
 
   // Function to handle row click

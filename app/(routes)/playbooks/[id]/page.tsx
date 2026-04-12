@@ -1,45 +1,17 @@
 'use client';
 
-import { StepWithTargets } from '@/lib/types';
 import Card from '@/lib/ui/card/Card';
 import Button from '@/lib/ui/buttons/Button';
-import { Playbook } from '@prisma/client';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { usePlaybook } from '@/lib/hooks/usePlaybooks';
 
 const PlaybookDetailsPage = () => {
-  const { id } = useParams(); // Access the playbook ID from the URL
-  const [playbook, setPlaybook] = useState<Playbook | null>(null);
-  const [steps, setSteps] = useState<StepWithTargets[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const { id } = useParams();
+  const { data: playbook, isLoading } = usePlaybook(Number(id));
   const router = useRouter();
+  const steps = playbook?.steps ?? [];
 
-  useEffect(() => {
-    const fetchPlaybookDetails = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/playbooks/${id}`);
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch playbook details: ${response.statusText}`
-          );
-        }
-        const data = await response.json();
-        setPlaybook(data.playbook);
-        setSteps(data.playbook.steps);
-      } catch (error) {
-        console.error('Error fetching playbook details:', error);
-        toast.error('Unable to load playbook details');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlaybookDetails();
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="container mx-auto py-4">
         <Card>

@@ -8,16 +8,17 @@ import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Volume } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaTrash } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import { VolumeState, mapVolumeStateToVariant } from '@/lib/constants/status';
+import { useVolumes } from '@/lib/hooks/useVolumes';
+import { useQueryClient } from '@tanstack/react-query';
 
 const VolumesPage = () => {
-  const [volumes, setVolumes] = useState<Volume[]>([]); // State to hold volumes
-  const [loading, setLoading] = useState<boolean>(true); // State to track loading state
-  const [error, setError] = useState<string | null>(null); // State to track errors
+  const { data: volumes = [], isLoading, error } = useVolumes();
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   // Use the type guard in the render function
@@ -93,39 +94,12 @@ const VolumesPage = () => {
     },
   ];
 
-  useEffect(() => {
-    // Fetch the volumes from the API
-    const fetchVolumes = async () => {
-      try {
-        const response = await fetch('/api/volumes');
-        if (!response.ok) {
-          throw new Error('Failed to fetch volumes');
-        }
-        const data = await response.json();
-
-        // Exclude the 'createdAt' field from each instance
-        const filteredVolumes = data.map(({ ...rest }: Volume) => rest);
-
-        setVolumes(filteredVolumes); // Set the fetched and filtered volumes to state
-      } catch (err) {
-        setError(
-          'Error fetching volumes: ' +
-            (err instanceof Error ? err.message : 'Unknown error')
-        );
-      } finally {
-        setLoading(false); // Set loading to false once the request is complete
-      }
-    };
-
-    fetchVolumes(); // Call the function on component mount
-  }, []);
-
-  if (loading) {
-    return <div>Loading volumes...</div>; // Loading message
+  if (isLoading) {
+    return <div>Loading volumes...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>; // Display error message if there was an error fetching data
+    return <div>{error.message}</div>;
   }
 
   // Function to handle row click
@@ -157,7 +131,7 @@ const VolumesPage = () => {
       });
 
       if (response.ok) {
-        setVolumes((prev) => prev.filter((v) => v.VolumeId !== volumeId));
+        queryClient.invalidateQueries({ queryKey: ['volumes'] });
         toast.success('Volume deleted successfully.');
       } else {
         const error = await response.json();

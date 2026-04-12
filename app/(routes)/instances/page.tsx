@@ -5,18 +5,17 @@ import StatusChip from '@/lib/ui/chips/StatusChips';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Instance } from '@aws-sdk/client-ec2';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import ActionButton from './components/ActionButton';
 import { EC2Status, mapEC2StatusToVariant } from '@/lib/constants/status';
-
-const REFRESH_INTERVAL_MS = 5 * 1000;
+import { useInstances } from '@/lib/hooks/useInstances';
+import { useQueryClient } from '@tanstack/react-query';
 
 const InstancesPage = () => {
-  const [instances, setInstances] = useState<Instance[]>([]); // State to hold instances
-  const [loading, setLoading] = useState<boolean>(true); // State to track loading state
-  const [error, setError] = useState<string | null>(null); // State to track errors
+  const { data: instances = [], isLoading, error } = useInstances();
+  const queryClient = useQueryClient();
   const router = useRouter();
+  const refetch = () => queryClient.invalidateQueries({ queryKey: ['instances'] });
 
   // Use the type guard in the render function
   const columns: Column<Instance>[] = [
@@ -67,56 +66,17 @@ const InstancesPage = () => {
         return (
           <ActionButton
             instance={instance}
-            onClick={() => {
-              fetchInstances();
-            }}
+            onClick={refetch}
           />
         );
       },
     },
   ];
 
-  // Fetch the instances from the API
-  const fetchInstances = async () => {
-    try {
-      const response = await fetch('/api/instances');
-      if (!response.ok) {
-        throw new Error('Failed to fetch instances');
-      }
-      const data = await response.json();
-
-      // Exclude the 'createdAt' field from each instance
-      const filteredInstances = data.map(({ ...rest }: Instance) => rest);
-
-      setInstances(filteredInstances); // Set the fetched and filtered instances to state
-      setError(null); // Clear error when successful
-    } catch {
-      setError(
-        'Failed to fetch data. Please check your AWS credentials.'
-      );
-    } finally {
-      setLoading(false); // Set loading to false once the request is complete
-    }
-  };
-
-  useEffect(() => {
-    fetchInstances(); // Call the function on component mount
-
-    // Set up the interval to fetch instances every `n` seconds (e.g., every 10 seconds)
-    const intervalId = setInterval(fetchInstances, REFRESH_INTERVAL_MS); // 10000ms = 10 seconds
-
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div className="flex items-center justify-center h-64">
         <div className="text-gray-400">Loading instances...</div>
-      </div>; // Loading message
-  }
-
-  if (error) {
-    return <div>{error}</div>; // Display error message if there was an error fetching data
+      </div>;
   }
 
   // Function to handle row click
@@ -136,9 +96,9 @@ const InstancesPage = () => {
           <FaCircleExclamation className="text-red-500 text-lg flex-shrink-0 mt-1" />
           <div>
             <p className="font-semibold text-red-200">AWS Connection Error</p>
-            <p className="text-red-300 text-sm">{error}</p>
+            <p className="text-red-300 text-sm">{error.message}</p>
             <button
-              onClick={fetchInstances}
+              onClick={refetch}
               className="text-red-200 text-sm underline hover:text-red-100 mt-2"
             >
               Retry Connection

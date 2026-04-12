@@ -3,41 +3,15 @@
 import Card from '@/lib/ui/card/Card';
 import { Instance } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { FaMicrochip } from 'react-icons/fa6';
-
-type Snapshot = {
-  SnapshotId: string;
-  State: string;
-};
+import { useInstances } from '@/lib/hooks/useInstances';
+import { useSnapshots } from '@/lib/hooks/useSnapshots';
 
 export default function Home() {
-  const [instances, setInstances] = useState<Instance[]>([]);
-  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: instances = [], isLoading: loadingInstances } = useInstances();
+  const { data: snapshots = [], isLoading: loadingSnapshots } = useSnapshots();
 
-  // Fetch data from the instances and snapshots APIs
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const instanceRes = await fetch('/api/instances');
-        const snapshotRes = await fetch('/api/snapshots');
-
-        const instanceData = await instanceRes.json();
-        const snapshotData: Snapshot[] = await snapshotRes.json();
-        setInstances(instanceData || []);
-        setSnapshots(snapshotData || []);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (loadingInstances || loadingSnapshots) return <div className="p-6">Loading...</div>;
 
   return (
     <div className="container mx-auto p-6">
