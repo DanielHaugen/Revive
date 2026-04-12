@@ -20,8 +20,24 @@ model User {
   password  String   // Store hashed password here
   firstName String?
   lastName  String?
+  role      String   @default("operator") // "admin" | "operator"
   createdAt DateTime @default(now()) // Auto-generated timestamp
   updatedAt DateTime @updatedAt     // Auto-update timestamp
+
+  auditLogs AuditLog[]
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  action     String   // e.g., "instance.start", "snapshot.delete", "playbook.run"
+  resourceId String?  // AWS resource ID or Prisma entity ID
+  detail     String?  // Human-readable description
+  userId     Int?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+
+  @@index([action])
+  @@index([createdAt])
 }
 
 model Playbook {

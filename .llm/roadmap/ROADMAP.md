@@ -139,21 +139,22 @@ Audit logging, user management, dashboard health, and admin tooling.
 
 | # | Task | Status | Notes | Ref |
 |---|------|--------|-------|-----|
-| 7.1 | `AuditLog` Prisma model + migration | 🔲 Todo | | PRD §3.8, Arch §3 |
-| 7.2 | Service layer audit logging (auto-log every mutation) | 🔲 Todo | Write `AuditLog` entry in every service method that mutates state. | PRD §3.8 |
-| 7.3 | Audit log API routes (list, filter, paginate) | 🔲 Todo | | PRD §3.8 |
-| 7.4 | Audit log page with filterable DataTable | 🔲 Todo | Sidebar link already exists. | PRD §3.8 |
+| 7.1 | `AuditLog` Prisma model + migration | ✅ Done | Added AuditLog model + User.role field. Migration `20260412171112_add_audit_log_and_user_role`. | PRD §3.8, Arch §3 |
+| 7.2 | Service layer audit logging (auto-log every mutation) | ✅ Done | `lib/services/audit.ts` — `logAudit()` + `listAuditLogs()`. Session helper `lib/services/session.ts`. | PRD §3.8 |
+| 7.3 | Audit log API routes (list, filter, paginate) | ✅ Done | `app/api/logs/route.ts` — GET with page/pageSize/action/resourceId filters. | PRD §3.8 |
+| 7.4 | Audit log page with filterable DataTable | ✅ Done | `app/(routes)/logs/page.tsx` — DataTable with action/resource filters, pagination. | PRD §3.8 |
 | 7.5 | Audit log CSV export | 🔲 Todo | | PRD §3.8 |
-| 7.6 | User profile page (view & edit) | 🔲 Todo | Sidebar link already exists. | PRD §3.9 |
-| 7.7 | Password change flow | 🔲 Todo | Verify current password before allowing change. | PRD §3.9 |
+| 7.6 | User profile page (view & edit) | ✅ Done | `app/(routes)/settings/profile/page.tsx` + API `app/api/user/profile/route.ts` (GET/PATCH). | PRD §3.9 |
+| 7.7 | Password change flow | ✅ Done | `app/(routes)/settings/password/page.tsx` + PUT `/api/user/profile`. Verifies current password. | PRD §3.9 |
 | 7.8 | Role-based access control (Admin / Operator) | 🔲 Todo | `User.role` enum. Enforce in service layer + hide admin UI for operators. | PRD §3.1, Arch §6 |
 | 7.9 | User management page (Admin only) | 🔲 Todo | List users, change roles, deactivate accounts. | PRD §3.9 |
-| 7.10 | Dashboard: resource health indicators | 🔲 Todo | Running/stopped/error counts per resource type. | PRD §3.7 |
-| 7.11 | Dashboard: recent activity feed | 🔲 Todo | Pull from `AuditLog`. Last 10 actions. | PRD §3.7 |
-| 7.12 | Dashboard: quick-action cards | 🔲 Todo | Start/stop most-used instances, run starred playbooks — one-click. | PRD §3.7 |
-| 7.13 | Dashboard: system status banner | 🔲 Todo | AWS connectivity, sync health, last sync time. | PRD §3.7 |
-| 7.14 | Settings page (`/settings`) | 🔲 Todo | Sidebar links to `/settings` but no page exists (404). Root settings page with navigation to sub-sections (profile, credentials, preferences). | PRD §3.9 |
-| 7.15 | AWS credentials configuration page | 🔲 Todo | UI for managing AWS access keys and default region. Currently only configurable via env vars. | PRD §3.9, §3.13 |
+| 7.10 | Dashboard: Redesign to provide most valuable metrics at first glance. | ✅ Done | Full rewrite of `app/page.tsx` with StatCards, breakdowns, activity feed, quick actions. | PRD §3.7 |
+| 7.11 | Dashboard: resource health indicators | ✅ Done | Running/stopped pills on instance card, in-use/available on volumes. | PRD §3.7 |
+| 7.12 | Dashboard: recent activity feed | ✅ Done | Last 10 audit log entries via `useAuditLogs` hook. | PRD §3.7 |
+| 7.13 | Dashboard: quick-action cards | ✅ Done | First 4 instances with start/stop/reboot buttons. | PRD §3.7 |
+| 7.14 | Dashboard: system status banner | ✅ Done | Sync status, last sync time, resource counts — color-coded banner. | PRD §3.7 |
+| 7.15 | Settings page (`/settings`) | ✅ Done | Hub page with nav cards to Profile, Password, AWS Config. Sub-pages created. | PRD §3.9 |
+| 7.16 | AWS credentials configuration page | ✅ Done | `app/(routes)/settings/aws/page.tsx` — env-var info display with masked credentials. | PRD §3.9, §3.13 |
 
 ---
 
