@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import Copy from '@/lib/ui/icons/Copy';
 import StatusChip from '@/lib/ui/chips/StatusChips';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
@@ -11,12 +12,51 @@ import { useInstances } from '@/lib/hooks/useInstances';
 import { useQueryClient } from '@tanstack/react-query';
 import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
 import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
+import { FaMagnifyingGlass } from 'react-icons/fa6';
+
+const STATUS_OPTIONS: EC2Status[] = ['running', 'stopped', 'stopping', 'pending', 'terminated', 'shutting-down'];
+
+function toTitleCase(s: string): string {
+  return s.replace(/(^|-)(\w)/g, (_, _sep, c) => (_sep ? ' ' : '') + c.toUpperCase());
+}
 
 const InstancesPage = () => {
   const { data: instances = [], isLoading, error } = useInstances();
   const queryClient = useQueryClient();
   const router = useRouter();
   const refetch = () => queryClient.invalidateQueries({ queryKey: ['instances'] });
+
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  const filteredInstances = useMemo(() => {
+    let result = instances;
+
+    if (statusFilter !== 'all') {
+      result = result.filter((i) => i.State?.Name === statusFilter);
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter((i) => {
+        const name = i.Tags?.find((t) => t.Key === 'Name')?.Value || '';
+        return (
+          name.toLowerCase().includes(q) ||
+          i.InstanceId?.toLowerCase().includes(q) ||
+          i.InstanceType?.toLowerCase().includes(q) ||
+          i.PublicIpAddress?.toLowerCase().includes(q) ||
+          i.PrivateIpAddress?.toLowerCase().includes(q) ||
+          i.Tags?.some(
+            (t) =>
+              t.Key?.toLowerCase().includes(q) ||
+              t.Value?.toLowerCase().includes(q)
+          )
+        );
+      });
+    }
+
+    return result;
+  }, [instances, search, statusFilter]);
 
   // Use the type guard in the render function
   const columns: Column<Instance>[] = [
@@ -103,20 +143,42 @@ const InstancesPage = () => {
         />
       )}
 
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div>
+      {/* Header + Filter Bar */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="shrink-0">
           <h1 className="text-3xl font-bold text-white">Instances</h1>
           <p className="text-gray-400 text-sm mt-1">
-            {instances.length} Active Resources
+            {filteredInstances.length} of {instances.length} Resources
           </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <FaMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
+            <input
+              type="text"
+              placeholder="Search by name, ID, IP, type, or tag..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-72 bg-gray-800 border border-gray-700 rounded-md py-2 pl-9 pr-3 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+            />
+          </div>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-sm text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          >
+            <option value="all">All Statuses</option>
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s}>{toTitleCase(s)}</option>
+            ))}
+          </select>
         </div>
       </div>
 
       {/* Data Table */}
       <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
         <DataTable
-          data={instances}
+          data={filteredInstances}
           columns={columns}
           onRowClick={handleRowClick}
         />

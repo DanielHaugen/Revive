@@ -1,9 +1,9 @@
 import Button from '@/lib/ui/buttons/Button';
 import { Instance } from '@aws-sdk/client-ec2';
 import { useState } from 'react';
-import { FaPowerOff } from 'react-icons/fa6';
+import { FaPowerOff, FaArrowsRotate } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
-import { startInstance, stopInstance } from '@/lib/api/instances';
+import { startInstance, stopInstance, rebootInstance } from '@/lib/api/instances';
 
 export type ActionButtonProps = {
   instance: Instance;
@@ -19,51 +19,59 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   // Track loading states
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const handleStart = async () => {
+  const handleAction = async (action: 'start' | 'stop' | 'reboot') => {
     setIsTransitioning(true);
     try {
-      // Call your API to start the instance
-      await startInstance(instance.InstanceId as string);
-      toast.success('Starting Instance!');
+      const id = instance.InstanceId as string;
+      if (action === 'start') {
+        await startInstance(id);
+        toast.success('Starting Instance!');
+      } else if (action === 'stop') {
+        await stopInstance(id);
+        toast.success('Stopping Instance!');
+      } else {
+        await rebootInstance(id);
+        toast.success('Rebooting Instance!');
+      }
     } catch (error) {
-      console.error('Error starting instance', error);
-      toast.error('Error starting Instance!');
+      console.error(`Error ${action}ing instance`, error);
+      toast.error(`Error ${action}ing Instance!`);
     } finally {
       if (onClick) onClick();
       setIsTransitioning(false);
     }
   };
 
-  const handleStop = async () => {
-    setIsTransitioning(true);
-    try {
-      // Call your API to stop the instance
-      await stopInstance(instance.InstanceId as string);
-      toast.success('Stopping Instance!');
-    } catch (error) {
-      console.error('Error stopping instance', error);
-      toast.error('Error stopping Instance!');
-    } finally {
-      if (onClick) onClick();
-      setIsTransitioning(false);
-    }
-  };
-
-  const showStartButton = instance.State?.Name !== 'running';
+  const isRunning = instance.State?.Name === 'running';
+  const showStartButton = !isRunning;
   const isInstanceInTransition =
     instance.State?.Name === 'pending' || instance.State?.Name === 'stopping';
 
   return (
-    <Button
-      onClick={showStartButton ? handleStart : handleStop}
-      ariaLabel={`${showStartButton ? 'Start' : 'Stop'} Instance`}
-      variant={showStartButton ? 'success' : 'danger'}
-      className={`flex items-center justify-center ${className}`}
-      disabled={isTransitioning || isInstanceInTransition}
-    >
-      <FaPowerOff className="mr-2" />
-      {showStartButton ? 'Start' : 'Stop'}
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button
+        onClick={() => handleAction(showStartButton ? 'start' : 'stop')}
+        ariaLabel={`${showStartButton ? 'Start' : 'Stop'} Instance`}
+        variant={showStartButton ? 'success' : 'danger'}
+        className={`flex items-center justify-center ${className}`}
+        disabled={isTransitioning || isInstanceInTransition}
+      >
+        <FaPowerOff className="mr-2" />
+        {showStartButton ? 'Start' : 'Stop'}
+      </Button>
+      {isRunning && (
+        <Button
+          onClick={() => handleAction('reboot')}
+          ariaLabel="Reboot Instance"
+          variant="warning"
+          className={`flex items-center justify-center ${className}`}
+          disabled={isTransitioning}
+        >
+          <FaArrowsRotate className="mr-2" />
+          Reboot
+        </Button>
+      )}
+    </div>
   );
 };
 

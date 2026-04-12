@@ -35,3 +35,21 @@ export async function stopInstance(instanceIds: string | string[]) {
 
   return response.json();
 }
+
+export async function rebootInstance(instanceIds: string | string[]) {
+  const idsArray = Array.isArray(instanceIds) ? instanceIds : [instanceIds];
+
+  const response = await fetch(`/api/instances/reboot`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ instanceIds: idsArray }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to reboot the instance(s)');
+  }
+
+  return response.json();
+}

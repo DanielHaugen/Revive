@@ -1,5 +1,6 @@
 import {
   DescribeInstancesCommand,
+  RebootInstancesCommand,
   StartInstancesCommand,
   StopInstancesCommand,
 } from '@aws-sdk/client-ec2';
@@ -75,4 +76,13 @@ export async function stopInstances(instanceIds: string | string[]) {
     instanceIds: ids,
     stoppingInstances: response.StoppingInstances,
   };
+}
+
+/** Reboot one or more instances. Supports '*' wildcard. */
+export async function rebootInstances(instanceIds: string | string[]) {
+  const ids = await resolveInstanceIds(instanceIds);
+  const command = new RebootInstancesCommand({ InstanceIds: ids });
+  await ec2Client.send(command);
+
+  return { instanceIds: ids };
 }

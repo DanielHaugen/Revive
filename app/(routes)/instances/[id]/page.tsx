@@ -109,14 +109,48 @@ const InstanceDetailsPage = () => {
               <Copy value={instance.PrivateIpAddress} />
             )}
           </InfoSection.Field>
-          <InfoSection.Field label="Pivate DNS Name">
+          <InfoSection.Field label="Private DNS Name">
             {instance.PrivateDnsName && (
               <Copy value={instance.PrivateDnsName} />
             )}
           </InfoSection.Field>
+          <InfoSection.Field label="Public DNS Name">
+            {instance.PublicDnsName && (
+              <Copy value={instance.PublicDnsName} />
+            )}
+          </InfoSection.Field>
+          <InfoSection.Field label="VPC ID">
+            {instance.VpcId && <Copy value={instance.VpcId} />}
+          </InfoSection.Field>
           <InfoSection.Field label="Subnet ID">
             {instance.SubnetId && <Copy value={instance.SubnetId} />}
           </InfoSection.Field>
+        </InfoSection>
+
+        <InfoSection
+          title={`Security Groups ( ${
+            instance.SecurityGroups?.length || 0
+          } )`}
+        >
+          {instance.SecurityGroups && instance.SecurityGroups.length > 0 ? (
+            <div className="space-y-2">
+              {instance.SecurityGroups.map((sg) => (
+                <div
+                  key={sg.GroupId}
+                  className="flex items-center gap-3 bg-gray-800 rounded-md px-4 py-2"
+                >
+                  <span className="text-sm font-medium text-gray-200">
+                    {sg.GroupName}
+                  </span>
+                  {sg.GroupId && (
+                    <Copy value={sg.GroupId} title="Security Group ID" />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm">No security groups attached.</p>
+          )}
         </InfoSection>
 
         <InfoSection

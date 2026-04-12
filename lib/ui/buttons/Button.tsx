@@ -12,6 +12,7 @@ type PrimaryButtonProps = {
     | 'secondary'
     | 'success'
     | 'danger'
+    | 'warning'
     | 'primary-outline'
     | 'secondary-outline'
     | 'success-outline'
@@ -32,6 +33,8 @@ const getVariantClassName = (variant: string) => {
       return 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500';
     case 'danger':
       return 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500';
+    case 'warning':
+      return 'bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500';
     case 'primary-outline':
       return 'border-2 border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white focus:ring-blue-500';
     case 'secondary-outline':

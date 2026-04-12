@@ -98,13 +98,13 @@ Fill out remaining CRUD operations now that the data layer and UX infrastructure
 
 | # | Task | Status | Notes | Ref |
 |---|------|--------|-------|-----|
-| 5.1 | Instance reboot API route + UI button | 🔲 Todo | | PRD §3.2 |
+| 5.1 | Instance reboot API route + UI button | ✅ Done | `RebootInstancesCommand`, `/api/instances/reboot`, `rebootInstance()` client fn, warning-variant button in ActionButton. | PRD §3.2 |
 | 5.2 | Instance tag editing from UI | 🔲 Todo | Inline tag editor on detail view. | PRD §3.2 |
-| 5.3 | Instance filtering and search (name, ID, status, tag) | 🔲 Todo | Filter bar above DataTable. Combine with React Query query params. | PRD §3.2 |
+| 5.3 | Instance filtering and search (name, ID, status, tag) | ✅ Done | Search input + status dropdown filter bar above DataTable. Filters by name, ID, IP, type, tags. | PRD §3.2 |
 | 5.4 | Batch operations: checkbox selection + bulk start/stop/reboot | 🔲 Todo | Toolbar appears when rows are selected. | PRD §3.2, Arch §9 |
 | 5.5 | Instance detail slide-over panel | 🔲 Todo | Click row to open right-panel without navigating away from list. | PRD §3.2, Arch §9 |
-| 5.6 | Security group and network info on instance detail | 🔲 Todo | | PRD §3.2 |
-| 5.7 | Copy instance ID / IP to clipboard | 🔲 Todo | Icon button using existing `Copy` component. | PRD §3.2 |
+| 5.6 | Security group and network info on instance detail | ✅ Done | Added VPC ID, Public DNS, security groups section to detail page. Fixed "Pivate" typo. | PRD §3.2 |
+| 5.7 | Copy instance ID / IP to clipboard | ✅ Done | Already implemented via `Copy` component on list (ID, IP) and detail (all IDs/IPs/DNS). | PRD §3.2 |
 | 5.8 | Create EBS volume (API + form) | 🔲 Todo | Size, type, AZ selection. | PRD §3.3 |
 | 5.9 | Attach/detach volume to/from instance | 🔲 Todo | | PRD §3.3 |
 | 5.10 | Volume and snapshot filtering and search | 🔲 Todo | Reuse filter bar pattern from 5.3. | PRD §3.3, §3.4 |
