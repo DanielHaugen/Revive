@@ -50,3 +50,31 @@ model Target {
   stepId        Int
   step          Step     @relation("StepTargets", fields: [stepId], references: [id], onDelete: Cascade) // Cascading delete for Step -> Target
 }
+
+// --- AWS Resource Cache ---
+
+model CachedInstance {
+  instanceId String   @id // e.g., "i-0454f86c03b5d679e"
+  data       Json     // Full Instance JSON from DescribeInstances
+  syncedAt   DateTime @default(now())
+}
+
+model CachedVolume {
+  volumeId String   @id // e.g., "vol-0abc123"
+  data     Json     // Full Volume JSON from DescribeVolumes
+  syncedAt DateTime @default(now())
+}
+
+model CachedSnapshot {
+  snapshotId String   @id // e.g., "snap-0abc123"
+  data       Json     // Full Snapshot JSON from DescribeSnapshots
+  syncedAt   DateTime @default(now())
+}
+
+model SyncStatus {
+  id          String    @id @default("singleton") // Only one row
+  lastSyncAt  DateTime?
+  lastError   String?
+  inProgress  Boolean   @default(false)
+  updatedAt   DateTime  @updatedAt
+}

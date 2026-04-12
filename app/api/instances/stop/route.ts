@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { stopInstances } from '@/lib/services/instances';
+import { syncInstances } from '@/lib/services/sync';
 import { validateBody } from '@/lib/validation/helpers';
 import { instanceIdsSchema } from '@/lib/validation/schemas';
 
@@ -10,6 +11,7 @@ export async function POST(request: Request) {
 
   try {
     const result = await stopInstances(instanceIds);
+    syncInstances().catch((e) => console.error('Post-stop sync failed:', e));
     return NextResponse.json({
       message: `Instances are stopping: ${result.instanceIds.join(', ')}`,
       data: result.stoppingInstances,

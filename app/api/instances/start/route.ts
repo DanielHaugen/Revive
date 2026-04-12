@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { startInstances } from '@/lib/services/instances';
+import { syncInstances } from '@/lib/services/sync';
 import { validateBody } from '@/lib/validation/helpers';
 import { instanceIdsSchema } from '@/lib/validation/schemas';
 
@@ -10,6 +11,7 @@ export async function POST(request: Request) {
 
   try {
     const result = await startInstances(instanceIds);
+    syncInstances().catch((e) => console.error('Post-start sync failed:', e));
     return NextResponse.json({
       message: `Instances are starting: ${result.instanceIds.join(', ')}`,
       data: result.startingInstances,

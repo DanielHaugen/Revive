@@ -81,14 +81,14 @@ Implement background AWS synchronization. This phase transforms the platform fro
 
 | # | Task | Status | Notes | Ref |
 |---|------|--------|-------|-----|
-| 4.1 | Add `CachedInstance`, `CachedVolume`, `CachedSnapshot` Prisma models | 🔲 Todo | Store AWS resource state locally. `syncedAt` timestamp on each record. | Arch §3, §4 |
-| 4.2 | Implement sync worker (`lib/services/sync.ts`) | 🔲 Todo | Server-side recurring job. Calls Describe APIs, upserts into cache tables. Configurable interval (default 30s). | PRD §3.10, Arch §4 |
-| 4.3 | Migrate read API routes to serve from cache tables | 🔲 Todo | `GET /api/instances` reads from `CachedInstance` instead of calling AWS directly. | PRD §3.10 |
-| 4.4 | Trigger immediate cache refresh after mutations | 🔲 Todo | Start/stop/create/delete calls AWS, then refreshes the relevant cache table. | PRD §3.10 |
-| 4.5 | "Last synced: Xs ago" indicator in Navbar | 🔲 Todo | Shows cache freshness. Updates in real time. | PRD §3.10, Arch §9 |
-| 4.6 | Make Navbar refresh button trigger on-demand sync | 🔲 Todo | Currently non-functional (`onClick` is a no-op). | PRD §3.10 |
-| 4.7 | Sync health monitoring and error surfacing | 🔲 Todo | Detect AWS API errors during sync. Show banner in UI if sync is failing. | PRD §3.10 |
-| 4.8 | Graceful degradation — show stale data when AWS is unreachable | 🔲 Todo | Display cached data with a "data may be outdated" warning. | PRD §3.10, §4 |
+| 4.1 | Add `CachedInstance`, `CachedVolume`, `CachedSnapshot` Prisma models | ✅ Done | Migration `20260412130031_add_aws_cache_tables`. Added `SyncStatus` singleton model. | Arch §3, §4 |
+| 4.2 | Implement sync worker (`lib/services/sync.ts`) | ✅ Done | `syncAll()`, `syncInstances()`, `syncVolumes()`, `syncSnapshots()`, `getSyncStatus()`. Uses Prisma transactions with stale-row cleanup. | PRD §3.10, Arch §4 |
+| 4.3 | Migrate read API routes to serve from cache tables | ✅ Done | `lib/services/cache.ts` — cache-first reads with direct-AWS fallback + background sync on first request. | PRD §3.10 |
+| 4.4 | Trigger immediate cache refresh after mutations | ✅ Done | `syncInstances()` after start/stop, `syncVolumes()` after delete, `syncSnapshots()` after tag — all as background `.catch()` calls. | PRD §3.10 |
+| 4.5 | "Last synced: Xs ago" indicator in Navbar | ✅ Done | `useSyncStatus()` hook with 10s refetchInterval. `formatLastSync()` helper in Navbar. | PRD §3.10, Arch §9 |
+| 4.6 | Make Navbar refresh button trigger on-demand sync | ✅ Done | `useTriggerSync()` mutation. Spinning icon + disabled state during sync. | PRD §3.10 |
+| 4.7 | Sync health monitoring and error surfacing | ✅ Done | `SyncBanner` component — red error banner when `lastError` is set, retry button. | PRD §3.10 |
+| 4.8 | Graceful degradation — show stale data when AWS is unreachable | ✅ Done | Yellow "data may be outdated" banner when last sync >5min ago. Cached data still served. | PRD §3.10, §4 |
 
 ---
 

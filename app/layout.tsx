@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import Sidebar from '@/lib/ui/navigation/Sidebar';
 import Navbar from '@/lib/ui/navigation/Navbar';
 import Breadcrumbs from '@/lib/ui/navigation/Breadcrumbs';
+import SyncBanner from '@/lib/ui/feedback/SyncBanner';
 import Providers from './providers';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,6 +30,7 @@ export default function RootLayout({
         <div className="flex h-screen flex-col">
           {/* Header */}
           <Navbar />
+          <SyncBanner />
 
           <div className="flex flex-1 overflow-hidden">
             {/* Sidebar */}

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { deleteVolumes } from '@/lib/services/volumes';
+import { syncVolumes } from '@/lib/services/sync';
 import { validateParam } from '@/lib/validation/helpers';
 import { awsVolumeIdSchema } from '@/lib/validation/schemas';
 
@@ -12,6 +13,7 @@ export async function DELETE(
 
   try {
     await deleteVolumes(v.data);
+    syncVolumes().catch((e) => console.error('Post-delete volume sync failed:', e));
     return NextResponse.json({
       message: `Volume ${v.data} deleted successfully`,
     });
