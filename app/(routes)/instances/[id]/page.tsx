@@ -14,6 +14,7 @@ import { mapEC2StatusToVariant } from '@/lib/constants/status';
 import { useInstance } from '@/lib/hooks/useInstances';
 import { useQueryClient } from '@tanstack/react-query';
 import { DetailSkeleton } from '@/lib/ui/feedback/Skeleton';
+import TagEditor from '@/lib/ui/tags/TagEditor';
 
 const InstanceDetailsPage = () => {
   const { id } = useParams();
@@ -151,6 +152,15 @@ const InstanceDetailsPage = () => {
           ) : (
             <p className="text-gray-500 text-sm">No security groups attached.</p>
           )}
+        </InfoSection>
+
+        <InfoSection title={`Tags ( ${instance.Tags?.length || 0} )`}>
+          <TagEditor
+            resourceId={instance.InstanceId || ''}
+            endpoint={`/api/instances/${instance.InstanceId}/tags`}
+            tags={instance.Tags || []}
+            onUpdate={refetch}
+          />
         </InfoSection>
 
         <InfoSection

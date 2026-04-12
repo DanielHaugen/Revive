@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 export type Column<T> = {
@@ -13,8 +13,16 @@ export type Column<T> = {
 type DataTableProps<T> = {
   data: T[];
   columns: Column<T>[];
-  onRowClick?: (rowData: T, e: React.MouseEvent) => void; // New prop for row click handling
+  onRowClick?: (rowData: T, e: React.MouseEvent) => void;
   className?: string;
+  /** Enable checkbox selection on each row. */
+  selectable?: boolean;
+  /** Set of currently selected row keys. */
+  selectedKeys?: Set<string>;
+  /** Called when selection changes. */
+  onSelectionChange?: (keys: Set<string>) => void;
+  /** Extract a unique string key from a row. Required when selectable is true. */
+  getRowKey?: (row: T) => string;
 };
 
 function DataTable<T>({
@@ -22,6 +30,10 @@ function DataTable<T>({
   columns,
   onRowClick,
   className,
+  selectable,
+  selectedKeys,
+  onSelectionChange,
+  getRowKey,
 }: DataTableProps<T>) {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof T;
@@ -57,6 +69,39 @@ function DataTable<T>({
     }));
   };
 
+  const allKeys = React.useMemo(
+    () => (selectable && getRowKey ? sortedData.map(getRowKey) : []),
+    [selectable, getRowKey, sortedData],
+  );
+
+  const allSelected = selectable && selectedKeys ? allKeys.length > 0 && allKeys.every((k) => selectedKeys.has(k)) : false;
+  const someSelected = selectable && selectedKeys ? allKeys.some((k) => selectedKeys.has(k)) && !allSelected : false;
+
+  const handleSelectAll = useCallback(() => {
+    if (!onSelectionChange) return;
+    if (allSelected) {
+      onSelectionChange(new Set());
+    } else {
+      onSelectionChange(new Set(allKeys));
+    }
+  }, [allSelected, allKeys, onSelectionChange]);
+
+  const handleSelectRow = useCallback(
+    (key: string) => {
+      if (!onSelectionChange || !selectedKeys) return;
+      const next = new Set(selectedKeys);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      onSelectionChange(next);
+    },
+    [onSelectionChange, selectedKeys],
+  );
+
+  const colSpan = selectable ? columns.length + 1 : columns.length;
+
   return (
     <div
       className={`bg-gray-900 border border-gray-800 rounded-lg overflow-hidden w-full ${className}`}
@@ -64,6 +109,17 @@ function DataTable<T>({
       <table className="min-w-full table-auto border-collapse">
         <thead className="bg-gray-800 border-b border-gray-700">
           <tr>
+            {selectable && (
+              <th className="px-3 py-3 w-10">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={(el) => { if (el) el.indeterminate = someSelected; }}
+                  onChange={handleSelectAll}
+                  className="accent-blue-500 w-4 h-4 cursor-pointer"
+                />
+              </th>
+            )}
             {columns.map((column, idx) => (
               <th
                 key={`col_${idx}`}
@@ -85,38 +141,55 @@ function DataTable<T>({
         <tbody>
           {sortedData.length === 0 ? (
             <tr>
-              <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500">
+              <td colSpan={colSpan} className="px-6 py-8 text-center text-gray-500">
                 No data found.
               </td>
             </tr>
           ) : (
-            sortedData.map((row, rowIndex) => (
-              <tr
-                key={`row_${rowIndex}`}
-                className={twJoin([
-                  'border-t border-gray-800 hover:bg-gray-800 transition-colors',
-                  onRowClick && 'cursor-pointer',
-                ])}
-                onClick={onRowClick ? (e) => onRowClick(row, e) : undefined}
-              >
-                {columns.map((column) => {
-                  const cellValue =
-                    typeof column.accessor === 'function'
-                      ? column.accessor(row)
-                      : row[column.accessor];
+            sortedData.map((row, rowIndex) => {
+              const rowKey = selectable && getRowKey ? getRowKey(row) : `row_${rowIndex}`;
+              const isSelected = selectable && selectedKeys ? selectedKeys.has(rowKey) : false;
 
-                  const renderValue = column.render
-                    ? column.render(cellValue, row)
-                    : renderDefault(cellValue);
-
-                  return (
-                    <td key={String(column.header)} className="px-6 py-3 text-sm text-gray-300">
-                      {renderValue}
+              return (
+                <tr
+                  key={rowKey}
+                  className={twJoin([
+                    'border-t border-gray-800 hover:bg-gray-800 transition-colors',
+                    onRowClick && 'cursor-pointer',
+                    isSelected && 'bg-gray-800/60',
+                  ])}
+                  onClick={onRowClick ? (e) => onRowClick(row, e) : undefined}
+                >
+                  {selectable && (
+                    <td className="px-3 py-3 w-10">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleSelectRow(rowKey)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="accent-blue-500 w-4 h-4 cursor-pointer"
+                      />
                     </td>
-                  );
-                })}
-              </tr>
-            ))
+                  )}
+                  {columns.map((column) => {
+                    const cellValue =
+                      typeof column.accessor === 'function'
+                        ? column.accessor(row)
+                        : row[column.accessor];
+
+                    const renderValue = column.render
+                      ? column.render(cellValue, row)
+                      : renderDefault(cellValue);
+
+                    return (
+                      <td key={String(column.header)} className="px-6 py-3 text-sm text-gray-300">
+                        {renderValue}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })
           )}
         </tbody>
       </table>

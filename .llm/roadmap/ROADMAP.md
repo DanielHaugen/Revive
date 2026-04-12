@@ -99,10 +99,10 @@ Fill out remaining CRUD operations now that the data layer and UX infrastructure
 | # | Task | Status | Notes | Ref |
 |---|------|--------|-------|-----|
 | 5.1 | Instance reboot API route + UI button | ✅ Done | `RebootInstancesCommand`, `/api/instances/reboot`, `rebootInstance()` client fn, warning-variant button in ActionButton. | PRD §3.2 |
-| 5.2 | Instance tag editing from UI | 🔲 Todo | Inline tag editor on detail view. | PRD §3.2 |
+| 5.2 | Instance tag editing from UI | ✅ Done | Generic `tagResources`/`untagResources` service, tag API routes for instances/volumes/snapshots, reusable `TagEditor` component on detail pages. | PRD §3.2 |
 | 5.3 | Instance filtering and search (name, ID, status, tag) | ✅ Done | Search input + status dropdown filter bar above DataTable. Filters by name, ID, IP, type, tags. | PRD §3.2 |
-| 5.4 | Batch operations: checkbox selection + bulk start/stop/reboot | 🔲 Todo | Toolbar appears when rows are selected. | PRD §3.2, Arch §9 |
-| 5.5 | Instance detail slide-over panel | 🔲 Todo | Click row to open right-panel without navigating away from list. | PRD §3.2, Arch §9 |
+| 5.4 | Batch operations: checkbox selection + bulk start/stop/reboot | ✅ Done | DataTable `selectable` prop with select-all/indeterminate. Batch toolbar with Start/Stop/Reboot buttons appears when rows selected. | PRD §3.2, Arch §9 |
+| 5.5 | Instance detail slide-over panel | ✅ Done | Reusable `SlideOver` component. Row click opens slide-over with instance info, networking, tags, volumes, actions, and "Full details" link. | PRD §3.2, Arch §9 |
 | 5.6 | Security group and network info on instance detail | ✅ Done | Added VPC ID, Public DNS, security groups section to detail page. Fixed "Pivate" typo. | PRD §3.2 |
 | 5.7 | Copy instance ID / IP to clipboard | ✅ Done | Already implemented via `Copy` component on list (ID, IP) and detail (all IDs/IPs/DNS). | PRD §3.2 |
 | 5.8 | Create EBS volume (API + form) | ✅ Done | CreateVolumeCommand service, POST route, CreateVolumeModal with AZ/size/type. | PRD §3.3 |

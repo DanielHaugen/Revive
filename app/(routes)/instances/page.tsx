@@ -12,7 +12,13 @@ import { useInstances } from '@/lib/hooks/useInstances';
 import { useQueryClient } from '@tanstack/react-query';
 import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
 import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
-import { FaMagnifyingGlass } from 'react-icons/fa6';
+import Button from '@/lib/ui/buttons/Button';
+import { FaMagnifyingGlass, FaPlay, FaStop, FaRotateRight } from 'react-icons/fa6';
+import { startInstance, stopInstance, rebootInstance } from '@/lib/api/instances';
+import { toast } from 'react-toastify';
+import SlideOver from '@/lib/ui/panels/SlideOver';
+import { InfoSection } from '@/lib/ui/info/InfoSection/InfoSection';
+import Link from 'next/link';
 
 const STATUS_OPTIONS: EC2Status[] = ['running', 'stopped', 'stopping', 'pending', 'terminated', 'shutting-down'];
 
@@ -28,6 +34,27 @@ const InstancesPage = () => {
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [batchLoading, setBatchLoading] = useState(false);
+  const [slideOverInstance, setSlideOverInstance] = useState<Instance | null>(null);
+
+  const handleBatchAction = async (action: 'start' | 'stop' | 'reboot') => {
+    const ids = Array.from(selectedKeys);
+    if (ids.length === 0) return;
+    setBatchLoading(true);
+    try {
+      if (action === 'start') await startInstance(ids);
+      else if (action === 'stop') await stopInstance(ids);
+      else await rebootInstance(ids);
+      toast.success(`${toTitleCase(action)} initiated for ${ids.length} instance(s)`);
+      setSelectedKeys(new Set());
+      refetch();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : `Failed to ${action} instances`);
+    } finally {
+      setBatchLoading(false);
+    }
+  };
 
   const filteredInstances = useMemo(() => {
     let result = instances;
@@ -126,10 +153,14 @@ const InstancesPage = () => {
   // Function to handle row click
   const handleRowClick = (instance: Instance, e: React.MouseEvent) => {
     e.stopPropagation();
-    // Check if the clicked element is a button or the svg in the button
-    if (e.target instanceof HTMLButtonElement || e.target instanceof SVGElement)
+    // Check if the clicked element is a button, checkbox, or svg
+    if (
+      e.target instanceof HTMLButtonElement ||
+      e.target instanceof SVGElement ||
+      e.target instanceof HTMLInputElement
+    )
       return;
-    router.push(`/instances/${instance.InstanceId}`); // Navigate to the instance page
+    setSlideOverInstance(instance);
   };
 
   return (
@@ -175,14 +206,193 @@ const InstancesPage = () => {
         </div>
       </div>
 
+      {/* Batch Toolbar */}
+      {selectedKeys.size > 0 && (
+        <div className="flex items-center gap-3 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+          <span className="text-sm text-gray-300 font-medium">
+            {selectedKeys.size} selected
+          </span>
+          <div className="h-4 w-px bg-gray-600" />
+          <Button
+            onClick={() => handleBatchAction('start')}
+            disabled={batchLoading}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs"
+            ariaLabel="Start selected instances"
+          >
+            <FaPlay className="text-[10px]" /> Start
+          </Button>
+          <Button
+            onClick={() => handleBatchAction('stop')}
+            disabled={batchLoading}
+            variant="danger"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs"
+            ariaLabel="Stop selected instances"
+          >
+            <FaStop className="text-[10px]" /> Stop
+          </Button>
+          <Button
+            onClick={() => handleBatchAction('reboot')}
+            disabled={batchLoading}
+            variant="warning"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs"
+            ariaLabel="Reboot selected instances"
+          >
+            <FaRotateRight className="text-[10px]" /> Reboot
+          </Button>
+          <button
+            onClick={() => setSelectedKeys(new Set())}
+            className="ml-auto text-xs text-gray-400 hover:text-gray-200 transition"
+          >
+            Clear selection
+          </button>
+        </div>
+      )}
+
       {/* Data Table */}
       <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
         <DataTable
           data={filteredInstances}
           columns={columns}
           onRowClick={handleRowClick}
+          selectable
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+          getRowKey={(row) => row.InstanceId || ''}
         />
       </div>
+
+      {/* Instance Detail Slide-Over */}
+      <SlideOver
+        isOpen={!!slideOverInstance}
+        onClose={() => setSlideOverInstance(null)}
+        title={
+          slideOverInstance?.Tags?.find((t) => t.Key === 'Name')?.Value ||
+          slideOverInstance?.InstanceId ||
+          'Instance'
+        }
+      >
+        {slideOverInstance && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <StatusChip
+                variant={mapEC2StatusToVariant(
+                  (slideOverInstance.State?.Name || 'Unknown') as EC2Status
+                )}
+                label={slideOverInstance.State?.Name || 'Unknown'}
+              />
+              <div className="flex items-center gap-2">
+                <ActionButton
+                  instance={slideOverInstance}
+                  onClick={() => {
+                    refetch();
+                    setSlideOverInstance(null);
+                  }}
+                />
+                <Link
+                  href={`/instances/${slideOverInstance.InstanceId}`}
+                  className="text-xs text-blue-400 hover:text-blue-300 transition"
+                >
+                  Full details →
+                </Link>
+              </div>
+            </div>
+
+            <InfoSection title="Instance Information">
+              <InfoSection.Field label="Instance ID">
+                {slideOverInstance.InstanceId && (
+                  <Copy value={slideOverInstance.InstanceId} />
+                )}
+              </InfoSection.Field>
+              <InfoSection.Field label="Type">
+                {slideOverInstance.InstanceType}
+              </InfoSection.Field>
+              <InfoSection.Field label="Platform">
+                {slideOverInstance.PlatformDetails}
+              </InfoSection.Field>
+              <InfoSection.Field label="Architecture">
+                {slideOverInstance.Architecture}
+              </InfoSection.Field>
+              <InfoSection.Field label="Launched">
+                {slideOverInstance.LaunchTime
+                  ? new Date(slideOverInstance.LaunchTime).toLocaleDateString()
+                  : 'Unknown'}
+              </InfoSection.Field>
+            </InfoSection>
+
+            <InfoSection title="Networking">
+              <InfoSection.Field label="Public IP">
+                {slideOverInstance.PublicIpAddress ? (
+                  <Copy value={slideOverInstance.PublicIpAddress} />
+                ) : (
+                  <span className="text-gray-500">—</span>
+                )}
+              </InfoSection.Field>
+              <InfoSection.Field label="Private IP">
+                {slideOverInstance.PrivateIpAddress && (
+                  <Copy value={slideOverInstance.PrivateIpAddress} />
+                )}
+              </InfoSection.Field>
+              <InfoSection.Field label="VPC ID">
+                {slideOverInstance.VpcId && (
+                  <Copy value={slideOverInstance.VpcId} />
+                )}
+              </InfoSection.Field>
+            </InfoSection>
+
+            <InfoSection
+              title={`Tags ( ${slideOverInstance.Tags?.length || 0} )`}
+            >
+              {slideOverInstance.Tags && slideOverInstance.Tags.length > 0 ? (
+                <div className="space-y-1">
+                  {slideOverInstance.Tags.map((tag, idx) => (
+                    <div
+                      key={`${tag.Key}-${idx}`}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <span className="text-gray-400 font-medium">
+                        {tag.Key}:
+                      </span>
+                      <span className="text-gray-300">{tag.Value || '—'}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No tags.</p>
+              )}
+            </InfoSection>
+
+            <InfoSection
+              title={`Volumes ( ${
+                slideOverInstance.BlockDeviceMappings?.length || 0
+              } )`}
+            >
+              {slideOverInstance.BlockDeviceMappings &&
+              slideOverInstance.BlockDeviceMappings.length > 0 ? (
+                <div className="space-y-1">
+                  {slideOverInstance.BlockDeviceMappings.map((bdm, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between text-sm bg-gray-800 rounded px-3 py-1.5"
+                    >
+                      <span className="text-gray-400">{bdm.DeviceName}</span>
+                      {bdm.Ebs?.VolumeId && (
+                        <Link
+                          href={`/volumes/${bdm.Ebs.VolumeId}`}
+                          className="text-blue-400 hover:text-blue-300"
+                        >
+                          {bdm.Ebs.VolumeId}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No volumes attached.</p>
+              )}
+            </InfoSection>
+          </div>
+        )}
+      </SlideOver>
     </div>
   );
 };

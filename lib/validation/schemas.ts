@@ -92,6 +92,14 @@ export const snapshotTagsSchema = z.object({
   tags: z.array(tagSchema).min(1, 'At least one tag is required').max(50),
 });
 
+export const resourceTagsSchema = z.object({
+  tags: z.array(tagSchema).max(50).optional(),
+  deleteTags: z.array(tagSchema).max(50).optional(),
+}).refine(
+  (data) => (data.tags && data.tags.length > 0) || (data.deleteTags && data.deleteTags.length > 0),
+  { message: 'At least one tag to add or remove is required' },
+);
+
 // --- Volumes ---
 
 export const createVolumeSchema = z.object({

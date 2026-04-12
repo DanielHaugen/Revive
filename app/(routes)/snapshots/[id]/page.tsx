@@ -3,21 +3,18 @@
 import Card from '@/lib/ui/card/Card';
 import { InfoSection } from '@/lib/ui/info/InfoSection/InfoSection';
 import LinkSnapshotModal from '@/lib/ui/modals/LinkSnapshotsModal';
-import DataTable, { Column } from '@/lib/ui/tables/DataTable';
-import { Tag } from '@aws-sdk/client-ec2';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useSnapshot } from '@/lib/hooks/useSnapshots';
-
-const tagsColumns: Column<Tag>[] = [
-  { header: 'Key', accessor: 'Key' },
-  { header: 'Value', accessor: 'Value' },
-];
+import { useQueryClient } from '@tanstack/react-query';
+import TagEditor from '@/lib/ui/tags/TagEditor';
 
 const SnapshotDetailsPage = () => {
   const { id } = useParams();
   const { data: snapshot } = useSnapshot(id as string);
   const [isModalOpen, setModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const refetch = () => queryClient.invalidateQueries({ queryKey: ['snapshots', id] });
 
   return (
     <main>
@@ -41,9 +38,14 @@ const SnapshotDetailsPage = () => {
           </InfoSection.Field>
         </InfoSection>
 
-        {snapshot?.Tags && (
-          <InfoSection title="Tags">
-            <DataTable data={snapshot.Tags} columns={tagsColumns} />
+        {snapshot && (
+          <InfoSection title={`Tags ( ${snapshot.Tags?.length || 0} )`}>
+            <TagEditor
+              resourceId={snapshot.SnapshotId || ''}
+              endpoint={`/api/snapshots/${snapshot.SnapshotId}/tags`}
+              tags={snapshot.Tags || []}
+              onUpdate={refetch}
+            />
           </InfoSection>
         )}
 
