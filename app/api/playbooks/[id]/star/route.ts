@@ -1,7 +1,6 @@
-import prisma from '@/lib/prisma'; // Make sure this path matches your Prisma setup
 import { NextResponse } from 'next/server';
+import { togglePlaybookStar } from '@/lib/services/playbooks';
 
-// PUT: Toggle the "starred" status of a playbook
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
@@ -12,10 +11,7 @@ export async function PUT(
   }
 
   try {
-    // Fetch the current playbook to check its status
-    const playbook = await prisma.playbook.findUnique({
-      where: { id: playbookId },
-    });
+    const playbook = await togglePlaybookStar(playbookId);
 
     if (!playbook) {
       return NextResponse.json(
@@ -24,13 +20,7 @@ export async function PUT(
       );
     }
 
-    // Toggle the "starred" status (Assuming "starred" is a boolean in your schema)
-    const updatedPlaybook = await prisma.playbook.update({
-      where: { id: playbookId },
-      data: { starred: !playbook.starred },
-    });
-
-    return NextResponse.json(updatedPlaybook, { status: 200 });
+    return NextResponse.json(playbook);
   } catch (error) {
     console.error('Error toggling playbook starred status:', error);
     return NextResponse.json(

@@ -1,15 +1,13 @@
-// app/api/volumes/[id]/route.ts
-
 import { NextResponse } from 'next/server';
-import { deleteVolume } from '../api';
+import { deleteVolumes } from '@/lib/services/volumes';
 
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const volumeId = params.id;
+  const { id } = params;
 
-  if (!volumeId) {
+  if (!id) {
     return NextResponse.json(
       { error: 'Volume ID is required' },
       { status: 400 }
@@ -17,15 +15,16 @@ export async function DELETE(
   }
 
   try {
-    await deleteVolume(volumeId);
+    await deleteVolumes(id);
     return NextResponse.json({
-      message: `Volume ${volumeId} deleted successfully`,
+      message: `Volume ${id} deleted successfully`,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting volume:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to delete volume' },
+      { error: error instanceof Error ? error.message : 'Failed to delete volume' },
       { status: 500 }
     );
   }
+}
 }

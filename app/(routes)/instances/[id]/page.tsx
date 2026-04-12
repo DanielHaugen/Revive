@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ActionButton from '../components/ActionButton';
-import { mapEC2StatusToVariant } from '../utils';
+import { mapEC2StatusToVariant } from '@/lib/constants/status';
 
 const REFRESH_INTERVAL_MS = 10 * 1000;
 

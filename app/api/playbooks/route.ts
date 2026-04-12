@@ -1,22 +1,14 @@
-import prisma from '@/lib/prisma';
+import { NextResponse } from 'next/server';
+import { listPlaybooks } from '@/lib/services/playbooks';
 
 export async function GET() {
   try {
-    const playbooks = await prisma.playbook.findMany({
-      include: {
-        steps: {
-          include: {
-            targets: true, // Include targets for each step
-          },
-        },
-      },
-    });
-    return new Response(JSON.stringify(playbooks), {
-      status: 200,
-    });
+    const playbooks = await listPlaybooks();
+    return NextResponse.json(playbooks);
   } catch (error) {
-    return new Response('Error fetching playbooks', {
-      status: 500,
-    });
+    return NextResponse.json(
+      { error: 'Error fetching playbooks' },
+      { status: 500 }
+    );
   }
 }

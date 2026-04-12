@@ -3,6 +3,7 @@
 import Copy from '@/lib/ui/icons/Copy';
 import Button from '@/lib/ui/buttons/Button';
 import StatusChip from '@/lib/ui/chips/StatusChips';
+import ConfirmationModal from '@/lib/ui/modals/ConfirmationModal';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Volume } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
@@ -10,12 +11,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaTrash } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
-import { VolumeState, mapVolumeStateToVariant } from './utils';
+import { VolumeState, mapVolumeStateToVariant } from '@/lib/constants/status';
 
 const VolumesPage = () => {
   const [volumes, setVolumes] = useState<Volume[]>([]); // State to hold volumes
   const [loading, setLoading] = useState<boolean>(true); // State to track loading state
   const [error, setError] = useState<string | null>(null); // State to track errors
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const router = useRouter();
 
   // Use the type guard in the render function
@@ -140,11 +142,14 @@ const VolumesPage = () => {
   };
 
   const onVolumeDeleteClicked = async (volumeId: string) => {
-    if (
-      volumeId.trim().length == 0 ||
-      !confirm('Are you sure you want to delete this Volume?')
-    )
-      return;
+    if (volumeId.trim().length == 0) return;
+    setDeleteTarget(volumeId);
+  };
+
+  const confirmDeleteVolume = async () => {
+    if (!deleteTarget) return;
+    const volumeId = deleteTarget;
+    setDeleteTarget(null);
 
     try {
       const response = await fetch(`/api/volumes/${volumeId}`, {
@@ -171,6 +176,13 @@ const VolumesPage = () => {
       </div>
       {/* Pass the volumes and columns to the DataTable component */}
       <DataTable data={volumes} columns={columns} onRowClick={handleRowClick} />
+
+      <ConfirmationModal
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeleteVolume}
+        message="Are you sure you want to delete this volume?"
+      />
     </div>
   );
 };

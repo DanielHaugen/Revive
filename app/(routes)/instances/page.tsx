@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import ActionButton from './components/ActionButton';
-import { EC2Status, mapEC2StatusToVariant } from './utils';
+import { EC2Status, mapEC2StatusToVariant } from '@/lib/constants/status';
 
 const REFRESH_INTERVAL_MS = 5 * 1000;
 

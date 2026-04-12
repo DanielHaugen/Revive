@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Target } from '@prisma/client';
-import { startInstances, stopInstances } from '@/app/api/instances/api';
-import prisma from '@/lib/prisma';
+import { startInstances, stopInstances } from '@/lib/services/instances';
+import { getPlaybook } from '@/lib/services/playbooks';
 
 // POST /api/playbooks/[id]/run
 export async function POST(
@@ -18,17 +18,7 @@ export async function POST(
   }
 
   try {
-    // Fetch the playbook with steps and targets
-    const playbook = await prisma.playbook.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        steps: {
-          include: {
-            targets: true,
-          },
-        },
-      },
-    });
+    const playbook = await getPlaybook(parseInt(id));
 
     if (!playbook) {
       return NextResponse.json(

@@ -3,7 +3,7 @@ import { Instance } from '@aws-sdk/client-ec2';
 import { useState } from 'react';
 import { FaPowerOff } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
-import { startInstance, stopInstance } from '../api';
+import { startInstance, stopInstance } from '@/lib/api/instances';
 
 export type ActionButtonProps = {
   instance: Instance;

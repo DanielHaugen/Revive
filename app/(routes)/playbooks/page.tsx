@@ -3,6 +3,7 @@
 import Card from '@/lib/ui/card/Card';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import Button from '@/lib/ui/buttons/Button';
+import ConfirmationModal from '@/lib/ui/modals/ConfirmationModal';
 import { Playbook } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -27,6 +28,7 @@ const PlaybooksPage = () => {
   const [runningPlaybookId, setRunningPlaybookId] = useState<number | null>(
     null
   ); // ID of the running playbook
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -164,7 +166,13 @@ const PlaybooksPage = () => {
   };
 
   const onPlaybookDeleteClicked = async (playbookId: number) => {
-    if (!confirm('Are you sure you want to delete this playbook?')) return;
+    setDeleteTarget(playbookId);
+  };
+
+  const confirmDeletePlaybook = async () => {
+    if (deleteTarget === null) return;
+    const playbookId = deleteTarget;
+    setDeleteTarget(null);
 
     try {
       const response = await fetch(`/api/playbooks/${playbookId}`, {
@@ -281,6 +289,13 @@ const PlaybooksPage = () => {
           </>
         )}
       </section>
+
+      <ConfirmationModal
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeletePlaybook}
+        message="Are you sure you want to delete this playbook?"
+      />
     </div>
   );
 };

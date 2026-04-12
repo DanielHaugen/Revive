@@ -7,7 +7,7 @@ import { Snapshot } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { SnapshotState, mapSnapshotStateToVariant } from './utils';
+import { SnapshotState, mapSnapshotStateToVariant } from '@/lib/constants/status';
 
 const columns: Column<Snapshot>[] = [
   {

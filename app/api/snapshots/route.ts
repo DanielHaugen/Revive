@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { fetchSnapshots } from './api';
+import { listSnapshots } from '@/lib/services/snapshots';
 
 export async function GET() {
   try {
-    const snapshots = await fetchSnapshots(); // Fetch all snapshots
+    const snapshots = await listSnapshots();
     return NextResponse.json(snapshots);
   } catch (error) {
     console.error('Error fetching EBS snapshots:', error);
