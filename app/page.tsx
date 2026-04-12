@@ -6,12 +6,17 @@ import Link from 'next/link';
 import { FaMicrochip } from 'react-icons/fa6';
 import { useInstances } from '@/lib/hooks/useInstances';
 import { useSnapshots } from '@/lib/hooks/useSnapshots';
+import Spinner from '@/lib/ui/feedback/Spinner';
 
 export default function Home() {
   const { data: instances = [], isLoading: loadingInstances } = useInstances();
   const { data: snapshots = [], isLoading: loadingSnapshots } = useSnapshots();
 
-  if (loadingInstances || loadingSnapshots) return <div className="p-6">Loading...</div>;
+  if (loadingInstances || loadingSnapshots) return (
+    <div className="flex items-center justify-center h-64">
+      <Spinner size="lg" />
+    </div>
+  );
 
   return (
     <div className="container mx-auto p-6">

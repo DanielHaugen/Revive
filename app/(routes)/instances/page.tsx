@@ -5,11 +5,12 @@ import StatusChip from '@/lib/ui/chips/StatusChips';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Instance } from '@aws-sdk/client-ec2';
 import { useRouter } from 'next/navigation';
-import { FaCircleExclamation } from 'react-icons/fa6';
 import ActionButton from './components/ActionButton';
 import { EC2Status, mapEC2StatusToVariant } from '@/lib/constants/status';
 import { useInstances } from '@/lib/hooks/useInstances';
 import { useQueryClient } from '@tanstack/react-query';
+import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
+import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
 
 const InstancesPage = () => {
   const { data: instances = [], isLoading, error } = useInstances();
@@ -74,9 +75,12 @@ const InstancesPage = () => {
   ];
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-64">
-        <div className="text-gray-400">Loading instances...</div>
-      </div>;
+    return (
+      <div className="space-y-6">
+        <div><h1 className="text-3xl font-bold text-white">Instances</h1></div>
+        <TableSkeleton rows={6} columns={6} />
+      </div>
+    );
   }
 
   // Function to handle row click
@@ -92,19 +96,11 @@ const InstancesPage = () => {
     <div className="space-y-6">
       {/* Error Banner */}
       {error && (
-        <div className="bg-red-900 bg-opacity-30 border border-red-700 rounded-lg p-4 flex items-start gap-3">
-          <FaCircleExclamation className="text-red-500 text-lg flex-shrink-0 mt-1" />
-          <div>
-            <p className="font-semibold text-red-200">AWS Connection Error</p>
-            <p className="text-red-300 text-sm">{error.message}</p>
-            <button
-              onClick={refetch}
-              className="text-red-200 text-sm underline hover:text-red-100 mt-2"
-            >
-              Retry Connection
-            </button>
-          </div>
-        </div>
+        <ErrorBanner
+          title="AWS Connection Error"
+          message={error.message}
+          onRetry={refetch}
+        />
       )}
 
       {/* Header Section */}

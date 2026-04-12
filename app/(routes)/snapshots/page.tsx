@@ -8,6 +8,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SnapshotState, mapSnapshotStateToVariant } from '@/lib/constants/status';
 import { useSnapshots } from '@/lib/hooks/useSnapshots';
+import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
+import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
 
 const columns: Column<Snapshot>[] = [
   {
@@ -66,11 +68,21 @@ const SnapshotsPage = () => {
   const router = useRouter();
 
   if (isLoading) {
-    return <div>Loading snapshots...</div>;
+    return (
+      <div className="container mx-auto py-4">
+        <h1 className="text-2xl font-semibold mb-4">EC2 Snapshots</h1>
+        <TableSkeleton rows={5} columns={7} />
+      </div>
+    );
   }
 
   if (error) {
-    return <div>{error.message}</div>;
+    return (
+      <div className="container mx-auto py-4">
+        <h1 className="text-2xl font-semibold mb-4">EC2 Snapshots</h1>
+        <ErrorBanner message={error.message} />
+      </div>
+    );
   }
 
   // Function to handle row click

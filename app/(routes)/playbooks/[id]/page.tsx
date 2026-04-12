@@ -4,6 +4,7 @@ import Card from '@/lib/ui/card/Card';
 import Button from '@/lib/ui/buttons/Button';
 import { useParams, useRouter } from 'next/navigation';
 import { usePlaybook } from '@/lib/hooks/usePlaybooks';
+import { DetailSkeleton } from '@/lib/ui/feedback/Skeleton';
 
 const PlaybookDetailsPage = () => {
   const { id } = useParams();
@@ -14,9 +15,7 @@ const PlaybookDetailsPage = () => {
   if (isLoading) {
     return (
       <div className="container mx-auto py-4">
-        <Card>
-          <p className="text-center">Loading playbook details...</p>
-        </Card>
+        <DetailSkeleton />
       </div>
     );
   }

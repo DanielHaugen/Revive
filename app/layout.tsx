@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Sidebar from '@/lib/ui/navigation/Sidebar';
 import Navbar from '@/lib/ui/navigation/Navbar';
+import Breadcrumbs from '@/lib/ui/navigation/Breadcrumbs';
 import Providers from './providers';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,6 +37,7 @@ export default function RootLayout({
             {/* Main Content */}
             <main className="flex-1 overflow-auto bg-gray-950">
               <div className="p-6">
+                <Breadcrumbs />
                 {children}
               </div>
             </main>

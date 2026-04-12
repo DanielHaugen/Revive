@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   FaBook,
@@ -31,6 +31,10 @@ type Route = {
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -89,7 +93,11 @@ export default function Sidebar() {
                   <li key={linkIndex}>
                     <Link
                       href={link.href}
-                      className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 hover:bg-gray-800 rounded-lg transition-colors duration-200"
+                      className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                        isActive(link.href)
+                          ? 'bg-blue-600 bg-opacity-20 text-blue-400'
+                          : 'text-gray-300 hover:bg-gray-800'
+                      }`}
                       title={isCollapsed ? link.label : ''}
                     >
                       {link.icon && <link.icon className="text-base flex-shrink-0" />}

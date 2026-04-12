@@ -21,6 +21,7 @@ import {
 import { toast } from 'react-toastify';
 import { usePlaybooks } from '@/lib/hooks/usePlaybooks';
 import { useQueryClient } from '@tanstack/react-query';
+import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
 
 const PlaybooksPage = () => {
   const [showStarred, setShowStarred] = useState<boolean>(true);
@@ -255,9 +256,7 @@ const PlaybooksPage = () => {
         {showAll && (
           <>
             {isLoading ? (
-              <Card>
-                <p className="text-center">Loading playbooks...</p>
-              </Card>
+              <TableSkeleton rows={4} columns={3} />
             ) : playbooks.length === 0 ? (
               <Card>
                 <p className="text-center">No Playbooks found.</p>

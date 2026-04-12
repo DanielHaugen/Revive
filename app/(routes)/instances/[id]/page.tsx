@@ -13,6 +13,7 @@ import ActionButton from '../components/ActionButton';
 import { mapEC2StatusToVariant } from '@/lib/constants/status';
 import { useInstance } from '@/lib/hooks/useInstances';
 import { useQueryClient } from '@tanstack/react-query';
+import { DetailSkeleton } from '@/lib/ui/feedback/Skeleton';
 
 const InstanceDetailsPage = () => {
   const { id } = useParams();
@@ -45,7 +46,7 @@ const InstanceDetailsPage = () => {
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <DetailSkeleton />;
   }
 
   if (!instance) {

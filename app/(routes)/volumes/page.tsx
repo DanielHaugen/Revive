@@ -14,6 +14,8 @@ import { toast } from 'react-toastify';
 import { VolumeState, mapVolumeStateToVariant } from '@/lib/constants/status';
 import { useVolumes } from '@/lib/hooks/useVolumes';
 import { useQueryClient } from '@tanstack/react-query';
+import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
+import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
 
 const VolumesPage = () => {
   const { data: volumes = [], isLoading, error } = useVolumes();
@@ -95,11 +97,21 @@ const VolumesPage = () => {
   ];
 
   if (isLoading) {
-    return <div>Loading volumes...</div>;
+    return (
+      <div className="container mx-auto py-4">
+        <h1 className="text-2xl font-semibold mb-4">EC2 Volumes</h1>
+        <TableSkeleton rows={5} columns={6} />
+      </div>
+    );
   }
 
   if (error) {
-    return <div>{error.message}</div>;
+    return (
+      <div className="container mx-auto py-4">
+        <h1 className="text-2xl font-semibold mb-4">EC2 Volumes</h1>
+        <ErrorBanner message={error.message} />
+      </div>
+    );
   }
 
   // Function to handle row click
