@@ -1,7 +1,9 @@
 import {
+  CreateSnapshotCommand,
+  CreateTagsCommand,
+  DeleteSnapshotCommand,
   DescribeSnapshotsCommand,
   DescribeSnapshotsCommandInput,
-  CreateTagsCommand,
   Tag,
   Snapshot,
 } from '@aws-sdk/client-ec2';
@@ -44,6 +46,23 @@ export async function tagSnapshot(snapshotId: string, tags: Tag[]) {
   const command = new CreateTagsCommand({
     Resources: [snapshotId],
     Tags: tags,
+  });
+  await ec2Client.send(command);
+}
+
+/** Create a snapshot from a volume. */
+export async function createSnapshot(volumeId: string, description?: string) {
+  const command = new CreateSnapshotCommand({
+    VolumeId: volumeId,
+    Description: description,
+  });
+  return ec2Client.send(command);
+}
+
+/** Delete a snapshot by ID. */
+export async function deleteSnapshot(snapshotId: string) {
+  const command = new DeleteSnapshotCommand({
+    SnapshotId: snapshotId,
   });
   await ec2Client.send(command);
 }

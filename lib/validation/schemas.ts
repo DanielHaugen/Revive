@@ -91,3 +91,27 @@ const tagSchema = z.object({
 export const snapshotTagsSchema = z.object({
   tags: z.array(tagSchema).min(1, 'At least one tag is required').max(50),
 });
+
+// --- Volumes ---
+
+export const createVolumeSchema = z.object({
+  availabilityZone: z.string().trim().min(1, 'Availability zone is required'),
+  size: z.number().int().min(1, 'Size must be at least 1 GB').max(16384),
+  volumeType: z.enum(['gp2', 'gp3', 'io1', 'io2', 'st1', 'sc1', 'standard']),
+});
+
+export const attachVolumeSchema = z.object({
+  instanceId: awsInstanceIdSchema,
+  device: z.string().trim().min(1, 'Device name is required'),
+});
+
+export const detachVolumeSchema = z.object({
+  volumeId: awsVolumeIdSchema,
+});
+
+// --- Snapshots ---
+
+export const createSnapshotSchema = z.object({
+  volumeId: awsVolumeIdSchema,
+  description: z.string().trim().max(255).optional(),
+});

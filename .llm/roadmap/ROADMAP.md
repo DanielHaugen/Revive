@@ -105,11 +105,11 @@ Fill out remaining CRUD operations now that the data layer and UX infrastructure
 | 5.5 | Instance detail slide-over panel | 🔲 Todo | Click row to open right-panel without navigating away from list. | PRD §3.2, Arch §9 |
 | 5.6 | Security group and network info on instance detail | ✅ Done | Added VPC ID, Public DNS, security groups section to detail page. Fixed "Pivate" typo. | PRD §3.2 |
 | 5.7 | Copy instance ID / IP to clipboard | ✅ Done | Already implemented via `Copy` component on list (ID, IP) and detail (all IDs/IPs/DNS). | PRD §3.2 |
-| 5.8 | Create EBS volume (API + form) | 🔲 Todo | Size, type, AZ selection. | PRD §3.3 |
-| 5.9 | Attach/detach volume to/from instance | 🔲 Todo | | PRD §3.3 |
-| 5.10 | Volume and snapshot filtering and search | 🔲 Todo | Reuse filter bar pattern from 5.3. | PRD §3.3, §3.4 |
-| 5.11 | Create snapshot from volume | 🔲 Todo | | PRD §3.4 |
-| 5.12 | Delete snapshot with confirmation | 🔲 Todo | | PRD §3.4 |
+| 5.8 | Create EBS volume (API + form) | ✅ Done | CreateVolumeCommand service, POST route, CreateVolumeModal with AZ/size/type. | PRD §3.3 |
+| 5.9 | Attach/detach volume to/from instance | ✅ Done | AttachVolumeCommand/DetachVolumeCommand services, POST/PATCH routes on volumes/[id]. | PRD §3.3 |
+| 5.10 | Volume and snapshot filtering and search | ✅ Done | Search + status filter on volumes and snapshots pages (same pattern as instances). | PRD §3.3, §3.4 |
+| 5.11 | Create snapshot from volume | ✅ Done | CreateSnapshotCommand service, POST route with Zod validation. | PRD §3.4 |
+| 5.12 | Delete snapshot with confirmation | ✅ Done | DeleteSnapshotCommand service, DELETE route, ConfirmationModal on snapshots page. | PRD §3.4 |
 | 5.13 | Restoration history table | 🔲 Todo | Placeholder card exists. Pull from `AuditLog` or `PlaybookRun` table. | PRD §3.5 |
 | 5.14 | Restoration confirmation dialog with impact summary | 🔲 Todo | | PRD §3.5 |
 | 5.15 | Restoration progress as multi-step visual timeline | 🔲 Todo | Replace raw SSE text with step-by-step visual indicators. | PRD §3.5 |
