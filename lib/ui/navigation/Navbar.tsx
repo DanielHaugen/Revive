@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { FaArrowsRotate } from 'react-icons/fa6';
 import { useSyncStatus, useTriggerSync } from '@/lib/hooks/useSync';
 
@@ -16,29 +19,51 @@ function formatLastSync(lastSyncAt: string | null): string {
 export default function Navbar() {
   const { data: syncStatus } = useSyncStatus();
   const triggerSync = useTriggerSync();
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement).tagName)) {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
-    <header className="bg-gray-900 text-white p-4 shadow-lg border-b border-gray-800">
-      <div className="flex items-center justify-between gap-4">
-        {/* Spacer for sidebar */}
-        <div className="w-0"></div>
+    <header className="bg-gradient-to-r from-gray-900 to-gray-950 text-white p-4 shadow-lg border-b border-gray-800">
+      <div className="flex items-center gap-4">
+        {/* Logo + Title */}
+        <Link href="/" className="flex items-center gap-2.5 shrink-0 hover:opacity-80 transition-opacity">
+          <Image
+            src="/images/revive_logo_cloud.png"
+            alt="Revive"
+            width={48}
+            height={48}
+            className="rounded"
+          />
+          <span className="text-xl font-semibold tracking-tight">Revive</span>
+        </Link>
 
-        {/* Page Title and Search */}
-        <div className="flex items-center justify-between flex-1 gap-6">
-          <h1 className="text-2xl font-semibold">Revive</h1>
-
-          {/* Search Bar */}
-          <div className="flex-1 flex justify-center max-w-md">
+        {/* Centered Search Bar */}
+        <div className="flex-1 flex justify-center">
+          <div className="relative w-full max-w-lg">
             <input
+              ref={searchRef}
               type="text"
-              placeholder="Search resources..."
-              className="form-input"
+              placeholder="Search or go to..."
+              className="w-full bg-gray-800 border border-gray-700 rounded-md py-1.5 px-3 pr-10 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
             />
+            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-gray-500 bg-gray-700 border border-gray-600 rounded px-1.5 py-0.5 font-mono leading-none">
+              /
+            </kbd>
           </div>
         </div>
 
         {/* Sync Status + Refresh */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           {syncStatus && (
             <span className="text-xs text-gray-500 whitespace-nowrap">
               {syncStatus.lastError
