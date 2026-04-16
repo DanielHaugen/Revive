@@ -125,3 +125,27 @@ export async function syncSnapshots() {
 export async function getSyncStatus() {
   return prisma.syncStatus.findUnique({ where: { id: 'singleton' } });
 }
+
+/** Get the auto-sync configuration. */
+export async function getSyncConfig() {
+  const row = await prisma.syncStatus.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: { id: 'singleton' },
+    select: { autoSyncEnabled: true, autoSyncIntervalSecs: true },
+  });
+  return row;
+}
+
+/** Update the auto-sync configuration. */
+export async function updateSyncConfig(data: {
+  autoSyncEnabled?: boolean;
+  autoSyncIntervalSecs?: number;
+}) {
+  return prisma.syncStatus.upsert({
+    where: { id: 'singleton' },
+    update: data,
+    create: { id: 'singleton', ...data },
+    select: { autoSyncEnabled: true, autoSyncIntervalSecs: true },
+  });
+}

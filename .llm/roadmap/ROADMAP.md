@@ -89,6 +89,7 @@ Implement background AWS synchronization. This phase transforms the platform fro
 | 4.6 | Make Navbar refresh button trigger on-demand sync | ✅ Done | `useTriggerSync()` mutation. Spinning icon + disabled state during sync. | PRD §3.10 |
 | 4.7 | Sync health monitoring and error surfacing | ✅ Done | `SyncBanner` component — red error banner when `lastError` is set, retry button. | PRD §3.10 |
 | 4.8 | Graceful degradation — show stale data when AWS is unreachable | ✅ Done | Yellow "data may be outdated" banner when last sync >5min ago. Cached data still served. | PRD §3.10, §4 |
+| 4.9 | Auto-sync with configurable interval | ✅ Done | `autoSyncEnabled` + `autoSyncIntervalSecs` fields on `SyncStatus`. `GET/PATCH /api/sync/config`. `useAutoSync` hook in Navbar drives client-side interval. `/settings/sync` page with toggle + preset buttons. Defaults: enabled, 30s. | PRD §3.10 |
 
 ---
 

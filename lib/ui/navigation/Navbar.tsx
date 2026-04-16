@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaArrowsRotate } from 'react-icons/fa6';
-import { useSyncStatus, useTriggerSync } from '@/lib/hooks/useSync';
+import { useSyncStatus, useTriggerSync, useAutoSync } from '@/lib/hooks/useSync';
 
 function formatLastSync(lastSyncAt: string | null): string {
   if (!lastSyncAt) return 'Never synced';
@@ -20,6 +20,15 @@ export default function Navbar() {
   const { data: syncStatus } = useSyncStatus();
   const triggerSync = useTriggerSync();
   const searchRef = useRef<HTMLInputElement>(null);
+
+  useAutoSync();
+
+  // Tick every 5 seconds so formatLastSync is recalculated live between React Query polls.
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 5_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {

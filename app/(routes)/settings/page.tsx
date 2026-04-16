@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FaUser, FaKey, FaCloud } from 'react-icons/fa6';
+import { FaUser, FaKey, FaCloud, FaArrowsRotate } from 'react-icons/fa6';
 
 const sections = [
   {
@@ -21,6 +21,12 @@ const sections = [
     icon: FaCloud,
     title: 'AWS Configuration',
     description: 'Manage AWS region and credential settings.',
+  },
+  {
+    href: '/settings/sync',
+    icon: FaArrowsRotate,
+    title: 'Sync Settings',
+    description: 'Configure auto-sync interval and enable or disable background sync.',
   },
 ];
 

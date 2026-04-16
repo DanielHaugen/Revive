@@ -88,9 +88,11 @@ model CachedSnapshot {
 }
 
 model SyncStatus {
-  id          String    @id @default("singleton") // Only one row
-  lastSyncAt  DateTime?
-  lastError   String?
-  inProgress  Boolean   @default(false)
-  updatedAt   DateTime  @updatedAt
+  id                   String    @id @default("singleton") // Only one row
+  lastSyncAt           DateTime?
+  lastError            String?
+  inProgress           Boolean   @default(false)
+  autoSyncEnabled      Boolean   @default(true)
+  autoSyncIntervalSecs Int       @default(30)
+  updatedAt            DateTime  @updatedAt
 }
