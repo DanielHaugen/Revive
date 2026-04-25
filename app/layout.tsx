@@ -38,7 +38,7 @@ export default function RootLayout({
 
             {/* Main Content */}
             <main className="flex-1 overflow-auto bg-gray-950">
-              <div className="p-6">
+              <div className="p-6 min-h-full flex flex-col">
                 <Breadcrumbs />
                 {children}
               </div>

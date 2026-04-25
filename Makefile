@@ -36,6 +36,65 @@ HEADER  := $(BOLD)$(BCYAN)
 LABEL   := $(BOLD)$(BWHITE)
 MUTED   := $(DIM)$(WHITE)
 
+# ── Docker Compose ───────────────────────────────────────
+
+## Start all services (detached)
+.PHONY: up
+up:
+	@echo "$(INFO)Starting services...$(RESET)"
+	docker compose up -d
+	@echo "$(SUCCESS)Services started.$(RESET)"
+
+## Build images and start all services (detached)
+.PHONY: up-build
+up-build:
+	@echo "$(INFO)Building and starting services...$(RESET)"
+	docker compose up -d --build
+	@echo "$(SUCCESS)Services started.$(RESET)"
+
+## Stop all services
+.PHONY: down
+down:
+	@echo "$(INFO)Stopping services...$(RESET)"
+	docker compose down
+	@echo "$(SUCCESS)Services stopped.$(RESET)"
+
+## Stop all services and remove volumes (destructive!)
+.PHONY: down-v
+down-v:
+	@echo "$(ERROR)$(BOLD)WARNING: This will remove all volumes including the database!$(RESET)"
+	docker compose down -v
+	@echo "$(SUCCESS)Services stopped and volumes removed.$(RESET)"
+
+## Restart all services
+.PHONY: restart
+restart:
+	@echo "$(INFO)Restarting services...$(RESET)"
+	docker compose restart
+	@echo "$(SUCCESS)Services restarted.$(RESET)"
+
+## Build images without starting
+.PHONY: build
+build:
+	@echo "$(INFO)Building images...$(RESET)"
+	docker compose build
+	@echo "$(SUCCESS)Build complete.$(RESET)"
+
+## Show status of running containers
+.PHONY: ps
+ps:
+	docker compose ps
+
+## Tail logs for all services (or SERVICE=name for one)
+.PHONY: logs
+logs:
+	docker compose logs -f $(SERVICE)
+
+## Open a shell in the app container
+.PHONY: shell
+shell:
+	docker exec -it nextjs_app sh
+
 # ── Helpers ──────────────────────────────────────────────
 
 ## Open an interactive psql shell
@@ -139,6 +198,18 @@ help:
 	@echo "$(HEADER)╔══════════════════════════════════════════════╗$(RESET)"
 	@echo "$(HEADER)║         Revive — Database Debug CLI          ║$(RESET)"
 	@echo "$(HEADER)╚══════════════════════════════════════════════╝$(RESET)"
+	@echo ""
+	@echo "$(LABEL)  Docker Compose$(RESET)"
+	@echo "$(MUTED)  ──────────────────────────────────────────────$(RESET)"
+	@echo "  $(CYAN)make up$(RESET)                      Start all services"
+	@echo "  $(CYAN)make up-build$(RESET)                Build and start all services"
+	@echo "  $(CYAN)make down$(RESET)                    Stop all services"
+	@echo "  $(CYAN)make down-v$(RESET)                  $(ERROR)Stop + remove volumes$(RESET)"
+	@echo "  $(CYAN)make restart$(RESET)                 Restart all services"
+	@echo "  $(CYAN)make build$(RESET)                   Build images"
+	@echo "  $(CYAN)make ps$(RESET)                      Show container status"
+	@echo "  $(CYAN)make logs$(RESET) $(MUTED)[SERVICE=name]$(RESET)    Tail service logs"
+	@echo "  $(CYAN)make shell$(RESET)                   Shell into app container"
 	@echo ""
 	@echo "$(LABEL)  Helpers$(RESET)"
 	@echo "$(MUTED)  ──────────────────────────────────────────────$(RESET)"

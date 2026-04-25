@@ -32,6 +32,7 @@ type UseAuditLogsParams = {
   pageSize?: number;
   action?: string;
   resourceId?: string;
+  since?: Date;
 };
 
 async function fetchAuditLogs(params: UseAuditLogsParams): Promise<AuditLogResponse> {
@@ -40,6 +41,7 @@ async function fetchAuditLogs(params: UseAuditLogsParams): Promise<AuditLogRespo
   if (params.pageSize) qs.set('pageSize', String(params.pageSize));
   if (params.action) qs.set('action', params.action);
   if (params.resourceId) qs.set('resourceId', params.resourceId);
+  if (params.since) qs.set('since', params.since.toISOString());
 
   const res = await fetch(`/api/logs?${qs.toString()}`);
   if (!res.ok) throw new Error('Failed to fetch audit logs');

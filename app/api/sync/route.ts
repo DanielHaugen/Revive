@@ -1,9 +1,25 @@
 import { NextResponse } from 'next/server';
 import { getSyncStatus, syncAll } from '@/lib/services/sync';
+import prisma from '@/lib/prisma';
 
-/** GET /api/sync — return current sync status. */
+const STUCK_SYNC_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes
+
+/** GET /api/sync — return current sync status. Auto-resets a stuck inProgress flag. */
 export async function GET() {
-  const status = await getSyncStatus();
+  let status = await getSyncStatus();
+
+  // If inProgress has been true for >2 min, the process was likely killed mid-sync.
+  if (
+    status?.inProgress &&
+    status.updatedAt &&
+    Date.now() - new Date(status.updatedAt).getTime() > STUCK_SYNC_THRESHOLD_MS
+  ) {
+    status = await prisma.syncStatus.update({
+      where: { id: 'singleton' },
+      data: { inProgress: false, lastError: 'Sync interrupted — previous run did not complete.' },
+    });
+  }
+
   return NextResponse.json(status ?? { lastSyncAt: null, lastError: null, inProgress: false });
 }
 

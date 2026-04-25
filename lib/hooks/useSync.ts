@@ -65,12 +65,18 @@ export function useTriggerSync() {
   const queryClient = useQueryClient();
 
   return useCallback(async () => {
-    await fetch('/api/sync', { method: 'POST' });
-    // Invalidate everything after sync completes
+    const res = await fetch('/api/sync', { method: 'POST' });
+    // 409 = already in progress; treat as a no-op rather than an error
+    if (!res.ok && res.status !== 409) {
+      console.error('Sync request failed:', res.status);
+    }
+    // Always refetch status so the UI reflects the real DB state
     await queryClient.invalidateQueries({ queryKey: ['syncStatus'] });
-    await queryClient.invalidateQueries({ queryKey: ['instances'] });
-    await queryClient.invalidateQueries({ queryKey: ['volumes'] });
-    await queryClient.invalidateQueries({ queryKey: ['snapshots'] });
+    if (res.ok) {
+      await queryClient.invalidateQueries({ queryKey: ['instances'] });
+      await queryClient.invalidateQueries({ queryKey: ['volumes'] });
+      await queryClient.invalidateQueries({ queryKey: ['snapshots'] });
+    }
   }, [queryClient]);
 }
 

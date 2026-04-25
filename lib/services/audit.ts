@@ -22,6 +22,7 @@ type ListAuditLogsParams = {
   action?: string;
   resourceId?: string;
   userId?: number;
+  since?: Date;
 };
 
 export async function listAuditLogs({
@@ -30,11 +31,13 @@ export async function listAuditLogs({
   action,
   resourceId,
   userId,
+  since,
 }: ListAuditLogsParams = {}) {
   const where = {
     ...(action && { action: { contains: action } }),
     ...(resourceId && { resourceId: { contains: resourceId } }),
     ...(userId && { userId }),
+    ...(since && { createdAt: { gte: since } }),
   };
 
   const [logs, total] = await Promise.all([
