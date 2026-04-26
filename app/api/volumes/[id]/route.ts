@@ -1,8 +1,35 @@
 import { NextResponse } from 'next/server';
-import { deleteVolumes, attachVolume, detachVolume } from '@/lib/services/volumes';
+import { getVolume, deleteVolumes, attachVolume, detachVolume } from '@/lib/services/volumes';
 import { syncVolumes } from '@/lib/services/sync';
 import { validateParam, validateBody } from '@/lib/validation/helpers';
 import { awsVolumeIdSchema, attachVolumeSchema } from '@/lib/validation/schemas';
+
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const v = validateParam(params.id, awsVolumeIdSchema);
+  if (v.error) return v.error;
+
+  try {
+    const volume = await getVolume(v.data);
+
+    if (!volume) {
+      return NextResponse.json(
+        { error: `No volume found with ID ${v.data}` },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(volume);
+  } catch (error) {
+    console.error(`Error fetching volume with ID ${v.data}:`, error);
+    return NextResponse.json(
+      { error: `Error fetching volume with ID ${v.data}` },
+      { status: 500 }
+    );
+  }
+}
 
 export async function DELETE(
   request: Request,

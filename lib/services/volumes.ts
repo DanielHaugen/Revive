@@ -10,15 +10,24 @@ import {
 } from '@aws-sdk/client-ec2';
 import { ec2Client, paginate } from '@/lib/services/aws';
 
-/** List all EBS volumes with pagination. */
-export async function listVolumes() {
+/** List all EBS volumes with pagination. Optionally filter by ID. */
+export async function listVolumes(volumeId?: string) {
   return paginate<Volume, { NextToken?: string; Volumes?: Volume[] }>(
     (nextToken) => {
-      const input: DescribeVolumesCommandInput = { NextToken: nextToken };
+      const input: DescribeVolumesCommandInput = {
+        NextToken: nextToken,
+        VolumeIds: volumeId ? [volumeId] : undefined,
+      };
       return ec2Client.send(new DescribeVolumesCommand(input));
     },
     'Volumes',
   );
+}
+
+/** Get a single volume by ID. Returns null if not found. */
+export async function getVolume(volumeId: string) {
+  const volumes = await listVolumes(volumeId);
+  return volumes[0] ?? null;
 }
 
 /** Delete one or more volumes by ID. */
