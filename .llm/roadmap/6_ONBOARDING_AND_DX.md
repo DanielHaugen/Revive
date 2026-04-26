@@ -19,7 +19,7 @@ Make the platform easy to adopt for new teams, new users, and new developers.
 | 6.1.3 | Health check endpoint (`/api/health`) | 🔲 Todo | Validates AWS credentials, DB connectivity, sync status. Used by setup wizard and status banner. | PRD §3.13 |
 | 6.1.4 | Clear error messaging for missing/invalid AWS credentials | 🔲 Todo | Specific error banner with link to settings page. Not a generic "fetch failed." | PRD §3.13 |
 | 6.1.5 | Guided tour / feature tooltips for first-time users | 🔲 Todo | Lightweight walkthrough highlighting sidebar sections, playbook creation, and resource management. | PRD §3.13 |
-| 6.1.6 | In-app documentation links for common workflows | 🔲 Todo | "How to restore an instance" help links on restoration page, etc. | PRD §3.13 |
+| 6.1.6 | In-app documentation / knowledge base viewer | ✅ Done | `/docs` and `/docs/[...slug]` pages. Reads markdown files from `docs/` at build time. Rendered with `react-markdown` + `remark-gfm` + `rehype-highlight`. `@tailwindcss/typography` for prose styling. Sidebar nav auto-generated from file tree. | PRD §3.13 |
 | 6.1.7 | Quick-start guide accessible from Dashboard | 🔲 Todo | Card on dashboard for new users: "Getting Started with Revive" with 3-4 guided steps. | PRD §3.13 |
 | 6.1.8 | Sample seed playbooks | 🔲 Todo | Pre-built playbook templates demonstrating start/stop/restore workflows. Loaded via `prisma/seed.ts`. | PRD §3.13 |
 

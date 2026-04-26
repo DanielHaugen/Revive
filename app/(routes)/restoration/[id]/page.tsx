@@ -129,8 +129,12 @@ export default function RestorationDetailPage({
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Restoration Detail</h1>
-          <p className="text-gray-500 text-sm mt-1 font-mono">{entry.resourceId ?? '—'}</p>
+          <h1 className="text-2xl font-bold text-white">
+            {detail.instanceName ?? entry.resourceId ?? 'Restoration Detail'}
+          </h1>
+          {detail.instanceName && (
+            <p className="text-gray-500 text-sm mt-1 font-mono">{entry.resourceId}</p>
+          )}
         </div>
         <StatusBadge action={entry.action} />
       </div>
@@ -151,6 +155,11 @@ export default function RestorationDetailPage({
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-5">
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Metadata</h2>
           <div>
+            {detail.instanceName && (
+              <MetaRow label={<><FaMicrochip className="inline mr-1.5 text-gray-500" />Instance</>}>
+                {detail.instanceName}
+              </MetaRow>
+            )}
             <MetaRow label={<><FaMicrochip className="inline mr-1.5 text-gray-500" />Instance ID</>}>
               <span className="font-mono">{entry.resourceId ?? '—'}</span>
             </MetaRow>

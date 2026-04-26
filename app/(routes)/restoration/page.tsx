@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Card from '@/lib/ui/card/Card';
 import Button from '@/lib/ui/buttons/Button';
@@ -125,20 +125,20 @@ const RestorationPage = () => {
     (e) => e.action !== 'restore_started',
   );
 
-  const runRestore = async () => {
-    if (!selectedInstance || !selectedSnapshot) return;
-    setShowConfirm(false);
+  /**
+   * Connect to a job's SSE stream and drive the timeline UI.
+   * Safe to call on mount for reconnection — replays all stored steps from the beginning.
+   */
+  const connectToJobStream = useCallback(async (jobId: number) => {
     setStepStatuses(INITIAL_STATUSES);
     setShowTimeline(true);
     setIsRestoring(true);
-    toast.info('Starting restoration…');
+
+    let hadError = false;
 
     try {
-      const res = await fetch(
-        `/api/instances/${selectedInstance.value}/restore/${selectedSnapshot.value}`,
-        { method: 'POST' },
-      );
-      if (!res.ok || !res.body) throw new Error('Failed to start restoration');
+      const res = await fetch(`/api/restoration/jobs/${jobId}/stream`);
+      if (!res.ok || !res.body) throw new Error('Failed to connect to restore stream');
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -151,6 +151,8 @@ const RestorationPage = () => {
         for (const line of text.split('\n\n')) {
           const msg = line.replace(/^data: /, '').trim();
           if (!msg) continue;
+
+          if (msg.toLowerCase().startsWith('error:')) hadError = true;
 
           const parsed = parseMessageToStep(msg);
           if (parsed) {
@@ -168,7 +170,8 @@ const RestorationPage = () => {
         }
       }
 
-      toast.success('Restoration complete.');
+      if (hadError) toast.error('Restoration failed.');
+      else toast.success('Restoration complete.');
     } catch {
       toast.error('Restoration failed.');
       setStepStatuses((prev) => {
@@ -182,6 +185,46 @@ const RestorationPage = () => {
       refetchLogs();
       queryClient.invalidateQueries({ queryKey: ['instances'] });
       queryClient.invalidateQueries({ queryKey: ['syncStatus'] });
+    }
+  }, [queryClient, refetchLogs]);
+
+  // On mount: reconnect to any in-progress restore (handles browser refresh mid-restore)
+  const mountCheckDone = useRef(false);
+  useEffect(() => {
+    if (mountCheckDone.current) return;
+    mountCheckDone.current = true;
+    fetch('/api/restoration/jobs?status=running&limit=1')
+      .then((r) => r.ok ? r.json() : [])
+      .then((jobs: { id: number }[]) => {
+        if (jobs.length > 0) connectToJobStream(jobs[0].id);
+      })
+      .catch(() => { /* ignore */ });
+  }, [connectToJobStream]);
+
+  const runRestore = async () => {
+    if (!selectedInstance || !selectedSnapshot) return;
+    setShowConfirm(false);
+    toast.info('Starting restoration…');
+
+    const instanceName =
+      instances.find((inst) => inst.InstanceId === selectedInstance.value)
+        ?.Tags?.find((t) => t.Key === 'Name')?.Value ?? undefined;
+
+    try {
+      const res = await fetch(
+        `/api/instances/${selectedInstance.value}/restore/${selectedSnapshot.value}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ instanceName }),
+        },
+      );
+      if (!res.ok) throw new Error('Failed to start restoration');
+
+      const { jobId } = await res.json() as { jobId: number };
+      connectToJobStream(jobId);
+    } catch {
+      toast.error('Failed to start restoration.');
     }
   };
 
@@ -302,8 +345,10 @@ const RestorationPage = () => {
                             {isCompleted ? 'Completed' : 'Failed'}
                           </span>
                         </td>
-                        <td className="py-2 pr-4 font-mono text-xs text-gray-300">
-                          {entry.resourceId ?? '—'}
+                        <td className="py-2 pr-4 text-xs text-gray-300">
+                          {detail.instanceName
+                            ? <><span>{detail.instanceName}</span><span className="ml-1 text-gray-500 font-mono">({entry.resourceId})</span></>
+                            : <span className="font-mono">{entry.resourceId ?? '—'}</span>}
                         </td>
                         <td className="py-2 font-mono text-xs text-gray-300">
                           {detail.snapshotId ?? '—'}
