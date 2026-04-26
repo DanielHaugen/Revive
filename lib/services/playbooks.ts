@@ -14,6 +14,11 @@ type TargetInput = {
 type StepInput = {
   type: string;
   targets: (TargetInput | string)[];
+  order?: number;
+  positionX?: number | null;
+  positionY?: number | null;
+  nextStepId?: string | null;
+  branches?: unknown;
 };
 
 type PlaybookInput = {
@@ -40,7 +45,7 @@ function mapTarget(target: TargetInput | string) {
 export async function listPlaybooks() {
   return prisma.playbook.findMany({
     include: {
-      steps: { include: { targets: true } },
+      steps: { include: { targets: true }, orderBy: { order: 'asc' } },
     },
   });
 }
@@ -50,7 +55,7 @@ export async function getPlaybook(id: number) {
   return prisma.playbook.findUnique({
     where: { id },
     include: {
-      steps: { include: { targets: true } },
+      steps: { include: { targets: true }, orderBy: { order: 'asc' } },
     },
   });
 }
@@ -62,8 +67,13 @@ export async function createPlaybook(data: PlaybookInput) {
       name: data.name,
       description: data.description,
       steps: {
-        create: data.steps.map((step) => ({
+        create: data.steps.map((step, index) => ({
           type: step.type,
+          order: step.order ?? index,
+          positionX: step.positionX ?? null,
+          positionY: step.positionY ?? null,
+          nextStepId: step.nextStepId ?? null,
+          branches: step.branches ?? undefined,
           targets: { create: step.targets.map(mapTarget) },
         })),
       },
@@ -81,14 +91,19 @@ export async function updatePlaybook(id: number, data: PlaybookInput) {
       name: data.name,
       description: data.description,
       steps: {
-        create: data.steps.map((step) => ({
+        create: data.steps.map((step, index) => ({
           type: step.type,
+          order: step.order ?? index,
+          positionX: step.positionX ?? null,
+          positionY: step.positionY ?? null,
+          nextStepId: step.nextStepId ?? null,
+          branches: step.branches ?? undefined,
           targets: { create: step.targets.map(mapTarget) },
         })),
       },
     },
     include: {
-      steps: { include: { targets: true } },
+      steps: { include: { targets: true }, orderBy: { order: 'asc' } },
     },
   });
 }

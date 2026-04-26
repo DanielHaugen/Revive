@@ -74,6 +74,11 @@ const targetSchema = z.union([
 const stepSchema = z.object({
   type: z.enum(['start-instances', 'stop-instances', 'restore-instances']),
   targets: z.array(targetSchema).min(1, 'Each step must have at least one target'),
+  order: z.number().int().min(0).optional(),
+  positionX: z.number().nullable().optional(),
+  positionY: z.number().nullable().optional(),
+  nextStepId: z.string().nullable().optional(),
+  branches: z.unknown().optional(),
 });
 
 export const playbookBodySchema = z.object({

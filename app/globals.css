@@ -5,6 +5,25 @@
 /* Syntax highlighting theme for Knowledge Base code blocks */
 @import 'highlight.js/styles/github-dark.css';
 
+/* React Flow canvas styles */
+@import '@xyflow/react/dist/style.css';
+
+/* React Flow dark theme overrides */
+.react-flow__controls {
+  background: #111827 !important;
+  border-color: #374151 !important;
+}
+.react-flow__controls-button {
+  background: #1f2937 !important;
+  border-bottom-color: #374151 !important;
+}
+.react-flow__controls-button:hover {
+  background: #374151 !important;
+}
+.react-flow__controls-button svg {
+  fill: #d1d5db !important;
+}
+
 /*
  * ─── Design Tokens ────────────────────────────────────────────────────────────
  * All core colors are defined here as CSS custom properties.

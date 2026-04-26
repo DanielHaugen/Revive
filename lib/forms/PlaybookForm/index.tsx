@@ -14,6 +14,11 @@ export type PlaybookData = {
   steps: {
     type: string;
     targets: string[];
+    order?: number;
+    positionX?: number | null;
+    positionY?: number | null;
+    nextStepId?: string | null;
+    branches?: unknown;
   }[];
 };
 

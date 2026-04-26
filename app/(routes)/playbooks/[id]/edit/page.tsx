@@ -38,7 +38,15 @@ const EditPlaybookPage = () => {
           let form: PlaybookData = {
             name: play.name,
             description: play.description,
-            steps: steps,
+            steps: steps.map((step) => ({
+              type: step.type,
+              targets: step.targets.map((t) => t.instanceId),
+              order: step.order ?? undefined,
+              positionX: step.positionX ?? undefined,
+              positionY: step.positionY ?? undefined,
+              nextStepId: step.nextStepId ?? undefined,
+              branches: step.branches ?? undefined,
+            })),
           };
           setFormData(form);
         }

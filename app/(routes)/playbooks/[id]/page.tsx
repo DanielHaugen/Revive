@@ -5,12 +5,12 @@ import Button from '@/lib/ui/buttons/Button';
 import { useParams, useRouter } from 'next/navigation';
 import { usePlaybook } from '@/lib/hooks/usePlaybooks';
 import { DetailSkeleton } from '@/lib/ui/feedback/Skeleton';
+import PlaybookCanvas from '@/lib/ui/playbooks/PlaybookCanvas';
 
 const PlaybookDetailsPage = () => {
   const { id } = useParams();
   const { data: playbook, isLoading } = usePlaybook(Number(id));
   const router = useRouter();
-  const steps = playbook?.steps ?? [];
 
   if (isLoading) {
     return (
@@ -36,7 +36,7 @@ const PlaybookDetailsPage = () => {
         <div className="flex items-start">
           <div className="flex flex-col">
             <h1 className="text-2xl font-semibold">{playbook.name}</h1>
-            <p className="text-gray-700">{playbook.description}</p>
+            <p className="text-gray-400">{playbook.description}</p>
           </div>
           <Button
             onClick={() => router.push(`/playbooks/${id}/edit`)}
@@ -50,22 +50,12 @@ const PlaybookDetailsPage = () => {
 
       <section>
         <h2 className="text-xl font-semibold mb-4">Steps</h2>
-        {steps.length === 0 ? (
+        {playbook.steps.length === 0 ? (
           <Card>
-            <p className="text-center">No steps found for this playbook.</p>
+            <p className="text-center text-gray-500">No steps found for this playbook.</p>
           </Card>
         ) : (
-          steps.map((step) => (
-            <Card key={step.id} className="mb-4">
-              <h3 className="font-semibold">{step.type}</h3>
-              <p>Targets:</p>
-              <ul className="list-disc pl-5 mt-1 text-sm text-gray-700">
-                {step.targets.map((t) => {
-                  return <li key={t.instanceId}>{t.instanceId}</li>;
-                })}
-              </ul>
-            </Card>
-          ))
+          <PlaybookCanvas steps={playbook.steps} />
         )}
       </section>
     </div>

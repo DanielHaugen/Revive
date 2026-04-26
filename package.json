@@ -2,12 +2,15 @@
   "name": "revive",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prisma:seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.701.0",
@@ -16,6 +19,7 @@
     "@prisma/client": "^5.22.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/react-query": "^5.99.0",
+    "@xyflow/react": "^12.10.2",
     "bcrypt": "^5.1.1",
     "highlight.js": "^11.11.1",
     "jose": "^5.10.0",

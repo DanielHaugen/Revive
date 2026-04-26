@@ -53,6 +53,11 @@ model Playbook {
 model Step {
   id          Int      @id @default(autoincrement())
   type        String   // e.g., "start-instances", "stop-instances", "restore-instances"
+  order       Int      @default(0) // Explicit execution order within a playbook
+  positionX   Float?   // Canvas X coordinate (used by visual editor)
+  positionY   Float?   // Canvas Y coordinate (used by visual editor)
+  nextStepId  String?  // ID of the next step to execute (drives canvas edges)
+  branches    Json?    // Stub for conditional fan-out: { condition: string, nextStepId: string }[]
   playbookId  Int
   playbook    Playbook @relation("PlaybookSteps", fields: [playbookId], references: [id], onDelete: Cascade) // Cascading delete for Playbook -> Step
   targets     Target[] @relation("StepTargets") // Multiple targets (instances) for each step

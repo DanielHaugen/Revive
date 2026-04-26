@@ -11,7 +11,7 @@ Phased delivery plan organized by functional category. Each category file owns o
 | 1 | [Foundation](1_FOUNDATION.md) | Bug fixes, security hardening, architecture refactoring, and shared infrastructure. All complete and never revisited. | 1–2 | ✅ Complete |
 | 2 | [Platform Infrastructure](2_PLATFORM_INFRASTRUCTURE.md) | UI feedback component library (skeletons, empty states, banners) and background AWS sync engine. | 3–4 | 🔨 In Progress |
 | 3 | [Resource Management](3_RESOURCE_MANAGEMENT.md) | Full CRUD and detail views for EC2 instances, EBS volumes, snapshots, and the volume restoration workflow. | 3.1–3.2 | 🔨 In Progress |
-| 4 | [Orchestration](4_ORCHESTRATION.md) | Playbook authoring, step execution engine, run history, failure policies, post-restore hooks, and visual canvas editor. | 4.1–4.3 | 🔲 Todo |
+| 4 | [Orchestration](4_ORCHESTRATION.md) | Playbook authoring, step execution engine, run history, failure policies, post-restore hooks, and visual canvas editor. | 4.1–4.3 | � In Progress |
 | 5 | [Observability & Administration](5_OBSERVABILITY_AND_ADMIN.md) | Audit logging, user management, RBAC, dashboard insights, competition metrics, and situational awareness. | 5.1–5.2 | 🔨 In Progress |
 | 6 | [Onboarding & Developer Experience](6_ONBOARDING_AND_DX.md) | First-run setup wizard, contextual empty states, health checks, and contributor tooling. | 8 | 🔲 Todo |
 | 7 | [Navigation & Power Users](7_NAVIGATION.md) | Command palette, keyboard shortcuts, contextual action menus, and advanced navigation. | 9 | 🔲 Todo |

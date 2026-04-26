@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Step" ADD COLUMN     "branches" JSONB,
+ADD COLUMN     "nextStepId" TEXT,
+ADD COLUMN     "order" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "positionX" DOUBLE PRECISION,
+ADD COLUMN     "positionY" DOUBLE PRECISION;

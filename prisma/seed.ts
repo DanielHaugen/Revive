@@ -46,6 +46,9 @@ async function main() {
         create: [
           {
             type: 'start-instances',
+            order: 0,
+            positionX: 250,
+            positionY: 50,
             targets: {
               create: [
                 {
@@ -72,6 +75,9 @@ async function main() {
         create: [
           {
             type: 'stop-instances',
+            order: 0,
+            positionX: 250,
+            positionY: 50,
             targets: {
               create: [
                 {
@@ -98,6 +104,9 @@ async function main() {
         create: [
           {
             type: 'restore-instances',
+            order: 0,
+            positionX: 250,
+            positionY: 50,
             targets: {
               create: [
                 {
@@ -154,6 +163,9 @@ async function main() {
         create: [
           {
             type: 'start-instances',
+            order: 0,
+            positionX: 250,
+            positionY: 50,
             targets: {
               create: [
                 {
@@ -185,6 +197,9 @@ async function main() {
         create: [
           {
             type: 'start-instances',
+            order: 0,
+            positionX: 250,
+            positionY: 50,
             targets: {
               create: [
                 {
@@ -216,6 +231,9 @@ async function main() {
         create: [
           {
             type: 'stop-instances',
+            order: 0,
+            positionX: 250,
+            positionY: 50,
             targets: {
               create: [
                 {
@@ -227,6 +245,9 @@ async function main() {
           },
           {
             type: 'start-instances',
+            order: 1,
+            positionX: 250,
+            positionY: 200,
             targets: {
               create: [
                 {
@@ -249,6 +270,9 @@ async function main() {
           },
           {
             type: 'start-instances',
+            order: 2,
+            positionX: 250,
+            positionY: 350,
             targets: {
               create: [
                 {
@@ -280,6 +304,9 @@ async function main() {
         create: [
           {
             type: 'stop-instances',
+            order: 0,
+            positionX: 250,
+            positionY: 50,
             targets: {
               create: [
                 {
@@ -297,6 +324,9 @@ async function main() {
           },
           {
             type: 'restore-instances',
+            order: 1,
+            positionX: 250,
+            positionY: 200,
             targets: {
               create: [
                 {
@@ -318,6 +348,9 @@ async function main() {
           },
           {
             type: 'start-instances',
+            order: 2,
+            positionX: 250,
+            positionY: 350,
             targets: {
               create: [
                 {
@@ -343,6 +376,9 @@ async function main() {
         create: [
           {
             type: 'stop-instances',
+            order: 0,
+            positionX: 250,
+            positionY: 50,
             targets: {
               create: [
                 {
