@@ -4,6 +4,7 @@ type AuditEntry = {
   action: string;
   resourceId?: string;
   detail?: string;
+  correlationId?: string;
   userId?: number;
 };
 
@@ -21,6 +22,7 @@ type ListAuditLogsParams = {
   pageSize?: number;
   action?: string;
   resourceId?: string;
+  correlationId?: string;
   userId?: number;
   since?: Date;
 };
@@ -30,12 +32,14 @@ export async function listAuditLogs({
   pageSize = 50,
   action,
   resourceId,
+  correlationId,
   userId,
   since,
 }: ListAuditLogsParams = {}) {
   const where = {
     ...(action && { action: { contains: action } }),
     ...(resourceId && { resourceId: { contains: resourceId } }),
+    ...(correlationId && { correlationId }),
     ...(userId && { userId }),
     ...(since && { createdAt: { gte: since } }),
   };

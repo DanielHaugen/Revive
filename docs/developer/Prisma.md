@@ -5,8 +5,8 @@ To start working with your PostgreSQL database inside Docker, you can follow the
 1. Verify Your PostgreSQL Container is Running
    Make sure your PostgreSQL container is running correctly. You can check the status by running:
 
-```sh
-docker-compose ps
+```shell
+docker compose ps
 ```
 
 This will show you the status of your containers. Your PostgreSQL container should be listed and in the "Up" state.

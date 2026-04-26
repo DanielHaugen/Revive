@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Syntax highlighting theme for Knowledge Base code blocks */
+@import 'highlight.js/styles/github-dark.css';
+
 /*
  * ─── Design Tokens ────────────────────────────────────────────────────────────
  * All core colors are defined here as CSS custom properties.

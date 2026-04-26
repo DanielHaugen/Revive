@@ -15,6 +15,8 @@ type DataTableProps<T> = {
   columns: Column<T>[];
   onRowClick?: (rowData: T, e: React.MouseEvent) => void;
   className?: string;
+  /** Initial sort direction for the first column. Defaults to 'ascending'. */
+  defaultSortDirection?: 'ascending' | 'descending';
   /** Enable checkbox selection on each row. */
   selectable?: boolean;
   /** Set of currently selected row keys. */
@@ -30,6 +32,7 @@ function DataTable<T>({
   columns,
   onRowClick,
   className,
+  defaultSortDirection = 'ascending',
   selectable,
   selectedKeys,
   onSelectionChange,
@@ -40,7 +43,7 @@ function DataTable<T>({
     direction: 'ascending' | 'descending';
   }>({
     key: columns[0]?.accessor as keyof T,
-    direction: 'ascending',
+    direction: defaultSortDirection,
   });
 
   const sortedData = React.useMemo(() => {

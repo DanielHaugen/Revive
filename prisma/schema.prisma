@@ -28,16 +28,18 @@ model User {
 }
 
 model AuditLog {
-  id         Int      @id @default(autoincrement())
-  action     String   // e.g., "instance.start", "snapshot.delete", "playbook.run"
-  resourceId String?  // AWS resource ID or Prisma entity ID
-  detail     String?  // Human-readable description
-  userId     Int?
-  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  createdAt  DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  action        String   // e.g., "instance.start", "snapshot.delete", "playbook.run"
+  resourceId    String?  // AWS resource ID or Prisma entity ID
+  detail        String?  // Human-readable description
+  correlationId String?  // Groups all audit events belonging to the same logical operation
+  userId        Int?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt     DateTime @default(now())
 
   @@index([action])
   @@index([createdAt])
+  @@index([correlationId])
 }
 
 model Playbook {

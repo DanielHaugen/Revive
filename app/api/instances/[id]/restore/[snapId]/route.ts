@@ -12,6 +12,8 @@ import {
 } from '@aws-sdk/client-ec2';
 import { ec2Client } from '@/lib/services/aws';
 import { awsInstanceIdSchema, awsSnapshotIdSchema } from '@/lib/validation/schemas';
+import { logAudit } from '@/lib/services/audit';
+import { getAuthUser } from '@/lib/services/session';
 
 export async function POST(
   request: Request,
@@ -26,6 +28,8 @@ export async function POST(
     });
   }
 
+  const user = await getAuthUser();
+
   const stream = new ReadableStream({
     async start(controller) {
       const sendProgress = (message: string) => {
@@ -34,12 +38,21 @@ export async function POST(
 
       const instanceId = idResult.data;
       const snapshotId = snapResult.data;
+      const correlationId = crypto.randomUUID();
+
+      await logAudit({
+        action: 'restore_started',
+        resourceId: instanceId,
+        detail: JSON.stringify({ snapshotId }),
+        correlationId,
+        userId: user?.userId,
+      });
 
       try {
-        // Step 1: Stop the instance
+        // Step 1: Stop the instance (force + skip OS shutdown — volume integrity is irrelevant during restore)
         sendProgress(`Stopping instance ${instanceId}...`);
         await ec2Client.send(
-          new StopInstancesCommand({ InstanceIds: [instanceId] })
+          new StopInstancesCommand({ InstanceIds: [instanceId], Force: true, SkipOsShutdown: true })
         );
         await waitUntilInstanceStopped(
           { client: ec2Client, maxWaitTime: 300 },
@@ -144,8 +157,22 @@ export async function POST(
         sendProgress(`Instance ${instanceId} started.`);
 
         sendProgress('Restoration complete.');
+        await logAudit({
+          action: 'restore_completed',
+          resourceId: instanceId,
+          detail: JSON.stringify({ snapshotId, newVolumeId }),
+          correlationId,
+          userId: user?.userId,
+        });
       } catch (error) {
         sendProgress(`Error: ${(error as Error).message}`);
+        await logAudit({
+          action: 'restore_failed',
+          resourceId: instanceId,
+          detail: JSON.stringify({ snapshotId, error: (error as Error).message }),
+          correlationId,
+          userId: user?.userId,
+        });
       } finally {
         controller.close(); // Close the stream
       }

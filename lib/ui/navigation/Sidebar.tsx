@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   FaBook,
+  FaBookOpen,
   FaGear,
   FaHouse,
   FaImage,
@@ -47,6 +48,7 @@ export default function Sidebar() {
       links: [
         { href: '/', label: 'Home', icon: FaHouse },
         { href: '/logs', label: 'Audit Logs', icon: FaRegClock },
+        { href: '/docs', label: 'Knowledge Base', icon: FaBookOpen },
       ],
     },
     {
@@ -93,7 +95,9 @@ export default function Sidebar() {
                   <li key={linkIndex}>
                     <Link
                       href={link.href}
-                      className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                      className={`flex items-center gap-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                        isCollapsed ? 'justify-center px-0' : 'px-3'
+                      } ${
                         isActive(link.href)
                           ? 'bg-blue-600 bg-opacity-20 text-blue-400'
                           : 'text-gray-300 hover:bg-gray-800'
@@ -109,7 +113,7 @@ export default function Sidebar() {
                   <li>
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 hover:bg-gray-800 rounded-lg transition-colors duration-200 w-full text-left"
+                      className={`flex items-center gap-3 py-2.5 text-sm font-medium text-gray-300 hover:bg-gray-800 rounded-lg transition-colors duration-200 w-full text-left ${isCollapsed ? 'justify-center px-0' : 'px-3'}`}
                       title={isCollapsed ? 'Logout' : ''}
                     >
                       <FaPowerOff className="text-base flex-shrink-0" />

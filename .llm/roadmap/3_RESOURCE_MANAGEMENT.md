@@ -24,9 +24,9 @@ Fill out remaining CRUD operations now that the data layer and UX infrastructure
 | 3.1.10 | Volume and snapshot filtering and search | ✅ Done | Search + status filter on volumes and snapshots pages (same pattern as instances). | PRD §3.3, §3.4 |
 | 3.1.11 | Create snapshot from volume | ✅ Done | CreateSnapshotCommand service, POST route with Zod validation. | PRD §3.4 |
 | 3.1.12 | Delete snapshot with confirmation | ✅ Done | DeleteSnapshotCommand service, DELETE route, ConfirmationModal on snapshots page. | PRD §3.4 |
-| 3.1.13 | Restoration history table | 🔲 Todo | Placeholder card exists. Pull from `AuditLog` or `PlaybookRun` table. | PRD §3.5 |
-| 3.1.14 | Restoration confirmation dialog with impact summary | 🔲 Todo | | PRD §3.5 |
-| 3.1.15 | Restoration progress as multi-step visual timeline | 🔲 Todo | Replace raw SSE text with step-by-step visual indicators. | PRD §3.5 |
+| 3.1.13 | Restoration history table | ✅ Done | Pulls `restore_completed`/`restore_failed` entries from `AuditLog` via `useAuditLogs({ action: 'restore' })`. Columns: time, status badge, instance ID, snapshot ID. | PRD §3.5 |
+| 3.1.14 | Restoration confirmation dialog with impact summary | ✅ Done | `RestoreConfirmModal` shows instance label, snapshot label, and a destructive-action warning before proceeding. | PRD §3.5 |
+| 3.1.15 | Restoration progress as multi-step visual timeline | ✅ Done | `RestoreTimeline` maps SSE messages to 7 named steps with pending/active/done/error icons. Replaces raw `<pre>` output. | PRD §3.5 |
 
 ---
 
