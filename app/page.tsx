@@ -288,14 +288,14 @@ export default function Home() {
         </Card>
 
         {/* Row 2 left: Recent Activity — fills remaining height */}
-        <Card className="my-0 p-5 lg:col-span-2 flex flex-col min-h-0">
+        <Card className="my-0 p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-semibold text-white">Recent Activity</h2>
             <Link href="/logs" className="text-xs text-blue-400 hover:text-blue-300 transition">
               View all →
             </Link>
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="max-h-80 overflow-y-auto">
             {auditData && auditData.logs.length > 0 ? (
               auditData.logs.map((log) => (
                 <ActivityItem key={log.id} log={log} />

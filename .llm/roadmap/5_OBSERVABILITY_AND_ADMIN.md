@@ -38,9 +38,9 @@ Elevates observability from "what did the system do" to "how is the competition 
 
 | # | Task | Status | Notes | Ref |
 |---|------|--------|-------|-----|
-| 5.2.1 | Restore time tracking (TTR) | 🔲 Todo | Record `restoreStartedAt` and `restoreCompletedAt` on each restore event. Compute TTR. Store on the AuditLog or a dedicated `RestoreEvent` table. | PRD §3.8 |
+| 5.2.1 | Restore time tracking (TTR) | ✅ Done | `completedAt DateTime?` added to `RestoreJob` (migration `20260426022506_add_ttr_to_restore_job`). `completeRestoreJob`/`failRestoreJob` set it. `runRestoreJob` tracks `startedAt = Date.now()` and writes `ttrSeconds` into the `restore_completed` audit log detail JSON. | PRD §3.8 |
 | 5.2.2 | Per-machine restore metrics on machine detail | 🔲 Todo | Stats panel: total restores (this session / all time), average TTR, fastest TTR, last restored at. | PRD §3.7 |
 | 5.2.3 | Dashboard: competition metrics card | 🔲 Todo | Additional stat card on the main dashboard showing: restores this session, avg TTR, machines currently in cooldown, open incidents. | PRD §3.7 |
 | 5.2.4 | Dashboard: restore activity chart scoped to active session | 🔲 Todo | Extend existing activity bar chart to optionally filter by the active Session so competition-day activity is isolated from historical noise. | PRD §3.7 |
 | 5.2.5 | Situational awareness full-screen view (`/ops`) | 🔲 Todo | Grid of all registered machines. Each cell: display name, IP, status chip (running/stopped/restoring/cooldown), cooldown countdown, last restore timestamp. Refreshes in real-time. Optimized for a second monitor. | PRD §3.7 |
-| 5.2.6 | Restore history page (`/restoration`) | � In Progress | `/restoration` has full history table (time, status, instance name + ID, snapshot ID) with clickable detail rows. `/restoration/[id]` detail page shows metadata, timeline, and per-session event log. Remaining: TTR column, triggered-by-playbook distinction, session-scoped filtering. | PRD §3.5 |
+| 5.2.6 | Restore history page (`/restoration`) | 🔨 In Progress | `/restoration` has full history table (time, status, instance name + ID, snapshot ID, TTR) with clickable detail rows. `/restoration/[id]` detail page shows metadata (including TTR label), timeline, and per-session event log. Remaining: triggered-by-playbook distinction, session-scoped filtering. | PRD §3.5 |

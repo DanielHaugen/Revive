@@ -183,8 +183,15 @@ export default function RestorationDetailPage({
               {new Date(entry.createdAt).toLocaleString()}
             </MetaRow>
             {startEntry && (
-              <MetaRow label="Duration">
-                {formatDuration(startEntry.createdAt, entry.createdAt)}
+              <MetaRow label="TTR">
+                {detail.ttrSeconds != null
+                  ? (() => {
+                      const s = Number(detail.ttrSeconds);
+                      if (s < 60) return `${s}s`;
+                      const m = Math.floor(s / 60);
+                      return s % 60 > 0 ? `${m}m ${s % 60}s` : `${m}m`;
+                    })()
+                  : formatDuration(startEntry.createdAt, entry.createdAt)}
               </MetaRow>
             )}
           </div>

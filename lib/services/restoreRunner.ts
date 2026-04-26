@@ -24,6 +24,8 @@ export async function runRestoreJob(params: {
 }): Promise<void> {
   const { jobId, instanceId, snapshotId, correlationId, userId, instanceName } = params;
 
+  const startedAt = Date.now();
+
   const addStep = async (message: string) => {
     try {
       await appendJobStep(jobId, message);
@@ -126,10 +128,11 @@ export async function runRestoreJob(params: {
 
     await addStep('Restoration complete.');
     await completeRestoreJob(jobId);
+    const ttrSeconds = Math.round((Date.now() - startedAt) / 1000);
     await logAudit({
       action: 'restore_completed',
       resourceId: instanceId,
-      detail: JSON.stringify({ snapshotId, newVolumeId, ...(instanceName && { instanceName }) }),
+      detail: JSON.stringify({ snapshotId, newVolumeId, ttrSeconds, ...(instanceName && { instanceName }) }),
       correlationId,
       userId,
     });

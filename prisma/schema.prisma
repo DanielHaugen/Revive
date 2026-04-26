@@ -72,16 +72,17 @@ model Target {
 // --- Restoration Jobs ---
 
 model RestoreJob {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   instanceId    String
   instanceName  String?
   snapshotId    String
-  status        String   @default("running") // "running" | "completed" | "failed"
-  steps         Json     @default("[]")      // ordered array of progress message strings
-  correlationId String   @unique
+  status        String    @default("running") // "running" | "completed" | "failed"
+  steps         Json      @default("[]")      // ordered array of progress message strings
+  correlationId String    @unique
   userId        Int?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  completedAt   DateTime?                     // set when status transitions to "completed" or "failed"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([status])
   @@index([instanceId])

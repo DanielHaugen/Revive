@@ -22,11 +22,11 @@ export async function appendJobStep(id: number, message: string): Promise<void> 
 }
 
 export async function completeRestoreJob(id: number): Promise<void> {
-  await prisma.restoreJob.update({ where: { id }, data: { status: 'completed' } });
+  await prisma.restoreJob.update({ where: { id }, data: { status: 'completed', completedAt: new Date() } });
 }
 
 export async function failRestoreJob(id: number): Promise<void> {
-  await prisma.restoreJob.update({ where: { id }, data: { status: 'failed' } });
+  await prisma.restoreJob.update({ where: { id }, data: { status: 'failed', completedAt: new Date() } });
 }
 
 export async function getRestoreJob(id: number) {

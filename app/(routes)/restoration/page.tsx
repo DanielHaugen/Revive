@@ -83,6 +83,13 @@ function formatRelativeTime(dateStr: string): string {
   return `${Math.floor(h / 24)}d ago`;
 }
 
+function formatTtr(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return s > 0 ? `${m}m ${s}s` : `${m}m`;
+}
+
 function parseDetail(detail: string | null): Record<string, string> {
   if (!detail) return {};
   try { return JSON.parse(detail); }
@@ -319,6 +326,7 @@ const RestorationPage = () => {
                     <th className="pb-2 pr-4 font-medium">Status</th>
                     <th className="pb-2 pr-4 font-medium">Instance</th>
                     <th className="pb-2 pr-4 font-medium">Snapshot</th>
+                    <th className="pb-2 pr-4 font-medium">TTR</th>
                     <th className="pb-2 font-medium"></th>
                   </tr>
                 </thead>
@@ -352,6 +360,11 @@ const RestorationPage = () => {
                         </td>
                         <td className="py-2 font-mono text-xs text-gray-300">
                           {detail.snapshotId ?? '—'}
+                        </td>
+                        <td className="py-2 pr-4 text-xs text-gray-400 whitespace-nowrap">
+                          {isCompleted && detail.ttrSeconds != null
+                            ? formatTtr(Number(detail.ttrSeconds))
+                            : <span className="text-gray-600">—</span>}
                         </td>
                         <td className="py-2 pl-2 text-right">
                           <Link
