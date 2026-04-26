@@ -22,6 +22,20 @@ type PlaybookInput = {
   steps: StepInput[];
 };
 
+/** Map a raw target (string ID or full object) to a Prisma create input. */
+function mapTarget(target: TargetInput | string) {
+  if (typeof target === 'string') {
+    return { instanceId: target };
+  }
+  return {
+    instanceId: target.instanceId,
+    instanceName: target.instanceName || null,
+    availabilityZone: target.availabilityZone || null,
+    snapshotId: target.snapshotId || null,
+    snapshotName: target.snapshotName || null,
+  };
+}
+
 /** List all playbooks with steps and targets. */
 export async function listPlaybooks() {
   return prisma.playbook.findMany({
@@ -50,20 +64,7 @@ export async function createPlaybook(data: PlaybookInput) {
       steps: {
         create: data.steps.map((step) => ({
           type: step.type,
-          targets: {
-            create: step.targets.map((target) => {
-              if (typeof target === 'string') {
-                return { instanceId: target };
-              }
-              return {
-                instanceId: target.instanceId,
-                instanceName: target.instanceName || null,
-                availabilityZone: target.availabilityZone || null,
-                snapshotId: target.snapshotId || null,
-                snapshotName: target.snapshotName || null,
-              };
-            }),
-          },
+          targets: { create: step.targets.map(mapTarget) },
         })),
       },
     },
@@ -71,10 +72,7 @@ export async function createPlaybook(data: PlaybookInput) {
 }
 
 /** Update a playbook. Deletes existing steps and recreates them. */
-export async function updatePlaybook(
-  id: number,
-  data: PlaybookInput
-) {
+export async function updatePlaybook(id: number, data: PlaybookInput) {
   await prisma.step.deleteMany({ where: { playbookId: id } });
 
   return prisma.playbook.update({
@@ -85,20 +83,7 @@ export async function updatePlaybook(
       steps: {
         create: data.steps.map((step) => ({
           type: step.type,
-          targets: {
-            create: step.targets.map((target) => {
-              if (typeof target === 'string') {
-                return { instanceId: target };
-              }
-              return {
-                instanceId: target.instanceId,
-                instanceName: target.instanceName || null,
-                availabilityZone: target.availabilityZone || null,
-                snapshotId: target.snapshotId || null,
-                snapshotName: target.snapshotName || null,
-              };
-            }),
-          },
+          targets: { create: step.targets.map(mapTarget) },
         })),
       },
     },

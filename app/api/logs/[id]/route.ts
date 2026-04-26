@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { validateParam } from '@/lib/validation/helpers';
+import { playbookIdSchema } from '@/lib/validation/schemas';
 
 export async function GET(
   _req: Request,
   { params }: { params: { id: string } }
 ) {
-  const id = parseInt(params.id, 10);
-  if (isNaN(id)) {
-    return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
-  }
+  const v = validateParam(params.id, playbookIdSchema);
+  if (v.error) return v.error;
+  const id = v.data;
 
   try {
     const log = await prisma.auditLog.findUnique({

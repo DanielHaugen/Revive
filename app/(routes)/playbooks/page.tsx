@@ -4,6 +4,7 @@ import Card from '@/lib/ui/card/Card';
 import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import Button from '@/lib/ui/buttons/Button';
 import ConfirmationModal from '@/lib/ui/modals/ConfirmationModal';
+import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
 import { Playbook } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -26,7 +27,7 @@ import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
 const PlaybooksPage = () => {
   const [showStarred, setShowStarred] = useState<boolean>(true);
   const [showAll, setShowAll] = useState<boolean>(true);
-  const { data: playbooks = [], isLoading } = usePlaybooks();
+  const { data: playbooks = [], isLoading, error } = usePlaybooks();
   const [runningPlaybookId, setRunningPlaybookId] = useState<number | null>(
     null
   );
@@ -212,6 +213,14 @@ const PlaybooksPage = () => {
           </button>
         </div>
       </section>
+
+      {/* Error Banner */}
+      {error && (
+        <ErrorBanner
+          title="Failed to load playbooks"
+          message={error.message}
+        />
+      )}
 
       {/* Starred Playbooks */}
       <section className="mb-4">

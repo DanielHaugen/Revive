@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Button from '@/lib/ui/buttons/Button';
+import Modal from '@/lib/ui/modals/Modal';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -67,14 +68,10 @@ export default function CreateVolumeModal({
     }
   };
 
-  const inputClass =
-    'w-full bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-sm text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition';
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-gray-900 border border-gray-700 p-6 rounded-lg shadow-lg max-w-md w-full text-gray-100">
-        <h2 className="text-xl font-bold mb-4">Create EBS Volume</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <h2 className="text-xl font-bold mb-4">Create EBS Volume</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
               Availability Zone
@@ -85,7 +82,7 @@ export default function CreateVolumeModal({
               onChange={(e) =>
                 setForm((f) => ({ ...f, availabilityZone: e.target.value }))
               }
-              className={inputClass}
+              className="form-input-sm"
             >
               <option value="">Select zone...</option>
               {availabilityZones.map((az) => (
@@ -109,7 +106,7 @@ export default function CreateVolumeModal({
               onChange={(e) =>
                 setForm((f) => ({ ...f, size: parseInt(e.target.value) || 1 }))
               }
-              className={inputClass}
+              className="form-input-sm"
             />
           </div>
 
@@ -122,7 +119,7 @@ export default function CreateVolumeModal({
               onChange={(e) =>
                 setForm((f) => ({ ...f, volumeType: e.target.value }))
               }
-              className={inputClass}
+              className="form-input-sm"
             >
               {VOLUME_TYPES.map((vt) => (
                 <option key={vt.value} value={vt.value}>
@@ -150,7 +147,6 @@ export default function CreateVolumeModal({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

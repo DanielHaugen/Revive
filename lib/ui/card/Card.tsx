@@ -10,7 +10,7 @@ type CardProps = {
 const Card: React.FC<CardProps> = ({ children, className }) => {
   return (
     <div
-      className={twMerge('bg-gray-900 border border-gray-800 rounded-lg shadow-lg my-4 p-6 text-gray-100', className)}
+      className={twMerge('surface-card my-4 p-6 text-gray-100', className)}
     >
       {children}
     </div>

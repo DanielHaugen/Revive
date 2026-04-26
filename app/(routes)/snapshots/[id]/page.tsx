@@ -3,6 +3,8 @@
 import Card from '@/lib/ui/card/Card';
 import { InfoSection } from '@/lib/ui/info/InfoSection/InfoSection';
 import LinkSnapshotModal from '@/lib/ui/modals/LinkSnapshotsModal';
+import Button from '@/lib/ui/buttons/Button';
+import { DetailSkeleton } from '@/lib/ui/feedback/Skeleton';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useSnapshot } from '@/lib/hooks/useSnapshots';
@@ -11,10 +13,14 @@ import TagEditor from '@/lib/ui/tags/TagEditor';
 
 const SnapshotDetailsPage = () => {
   const { id } = useParams();
-  const { data: snapshot } = useSnapshot(id as string);
+  const { data: snapshot, isLoading } = useSnapshot(id as string);
   const [isModalOpen, setModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const refetch = () => queryClient.invalidateQueries({ queryKey: ['snapshots', id] });
+
+  if (isLoading) {
+    return <DetailSkeleton />;
+  }
 
   return (
     <main>
@@ -49,12 +55,9 @@ const SnapshotDetailsPage = () => {
           </InfoSection>
         )}
 
-        <button
-          onClick={() => setModalOpen(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
+        <Button onClick={() => setModalOpen(true)}>
           Link to EC2 Instance
-        </button>
+        </Button>
       </Card>
 
       {isModalOpen && (

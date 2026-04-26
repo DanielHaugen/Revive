@@ -63,7 +63,7 @@ export default function Navbar() {
               ref={searchRef}
               type="text"
               placeholder="Search or go to..."
-              className="w-full bg-gray-800 border border-gray-700 rounded-md py-1.5 px-3 pr-10 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+              className="form-input-sm pr-10"
             />
             <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-gray-500 bg-gray-700 border border-gray-600 rounded px-1.5 py-0.5 font-mono leading-none">
               /

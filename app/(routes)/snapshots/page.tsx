@@ -7,7 +7,7 @@ import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Snapshot } from '@aws-sdk/client-ec2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SnapshotState, mapSnapshotStateToVariant } from '@/lib/constants/status';
+import { SnapshotState, mapSnapshotStateToVariant, SNAPSHOT_STATUS_OPTIONS } from '@/lib/constants/status';
 import { useSnapshots } from '@/lib/hooks/useSnapshots';
 import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
 import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
@@ -16,8 +16,6 @@ import ConfirmationModal from '@/lib/ui/modals/ConfirmationModal';
 import { FaMagnifyingGlass, FaTrash } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
-
-const STATUS_OPTIONS: SnapshotState[] = ['completed', 'pending', 'error', 'recoverable', 'recovering'];
 
 function toTitleCase(s: string): string {
   return s.replace(/(^|-)(\w)/g, (_, _sep, c) => (_sep ? ' ' : '') + c.toUpperCase());
@@ -181,7 +179,7 @@ const SnapshotsPage = () => {
             className="bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-sm text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
           >
             <option value="all">All Statuses</option>
-            {STATUS_OPTIONS.map((s) => (
+            {SNAPSHOT_STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>{toTitleCase(s)}</option>
             ))}
           </select>

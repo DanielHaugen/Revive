@@ -1,5 +1,10 @@
 import { StatusChipVariant } from '@/lib/ui/chips/StatusChips';
 
+// --- Refetch intervals (ms) ---
+
+export const REFETCH_INTERVAL_LIST = 5_000;
+export const REFETCH_INTERVAL_DETAIL = 10_000;
+
 // --- EC2 Instance statuses ---
 
 export type EC2Status =
@@ -23,6 +28,10 @@ export function mapEC2StatusToVariant(status: EC2Status): StatusChipVariant {
   return ec2StatusMap[status];
 }
 
+export const EC2_STATUS_OPTIONS: EC2Status[] = [
+  'running', 'stopped', 'stopping', 'pending', 'terminated', 'shutting-down',
+];
+
 // --- Snapshot statuses ---
 
 export type SnapshotState =
@@ -45,6 +54,10 @@ export function mapSnapshotStateToVariant(
 ): StatusChipVariant {
   return snapshotStatusMap[status];
 }
+
+export const SNAPSHOT_STATUS_OPTIONS: SnapshotState[] = [
+  'completed', 'pending', 'error', 'recoverable', 'recovering',
+];
 
 // --- Volume statuses ---
 
@@ -70,3 +83,12 @@ export function mapVolumeStateToVariant(
 ): StatusChipVariant {
   return volumeStatusMap[status];
 }
+
+export const VOLUME_STATUS_OPTIONS: VolumeState[] = [
+  'available', 'in-use', 'creating', 'deleting', 'deleted', 'error',
+];
+
+// --- Volume types ---
+
+export const VOLUME_TYPE_VALUES = ['gp2', 'gp3', 'io1', 'io2', 'st1', 'sc1', 'standard'] as const;
+export type VolumeType = typeof VOLUME_TYPE_VALUES[number];

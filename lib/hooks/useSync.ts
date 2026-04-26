@@ -2,6 +2,7 @@
 
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
+import { REFETCH_INTERVAL_DETAIL } from '@/lib/constants/status';
 
 type SyncStatus = {
   lastSyncAt: string | null;
@@ -30,7 +31,7 @@ export function useSyncStatus() {
   return useQuery({
     queryKey: ['syncStatus'],
     queryFn: fetchSyncStatus,
-    refetchInterval: 10_000,
+    refetchInterval: REFETCH_INTERVAL_DETAIL,
   });
 }
 

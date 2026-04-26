@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { VOLUME_TYPE_VALUES } from '@/lib/constants/status';
 
 // --- Shared primitives ---
 
@@ -105,7 +106,7 @@ export const resourceTagsSchema = z.object({
 export const createVolumeSchema = z.object({
   availabilityZone: z.string().trim().min(1, 'Availability zone is required'),
   size: z.number().int().min(1, 'Size must be at least 1 GB').max(16384),
-  volumeType: z.enum(['gp2', 'gp3', 'io1', 'io2', 'st1', 'sc1', 'standard']),
+  volumeType: z.enum(VOLUME_TYPE_VALUES),
 });
 
 export const attachVolumeSchema = z.object({

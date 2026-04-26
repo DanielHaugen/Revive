@@ -7,7 +7,7 @@ import DataTable, { Column } from '@/lib/ui/tables/DataTable';
 import { Instance } from '@aws-sdk/client-ec2';
 import { useRouter } from 'next/navigation';
 import ActionButton from './components/ActionButton';
-import { EC2Status, mapEC2StatusToVariant } from '@/lib/constants/status';
+import { EC2Status, mapEC2StatusToVariant, EC2_STATUS_OPTIONS } from '@/lib/constants/status';
 import { useInstances } from '@/lib/hooks/useInstances';
 import { useQueryClient } from '@tanstack/react-query';
 import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
@@ -19,8 +19,6 @@ import { toast } from 'react-toastify';
 import SlideOver from '@/lib/ui/panels/SlideOver';
 import { InfoSection } from '@/lib/ui/info/InfoSection/InfoSection';
 import Link from 'next/link';
-
-const STATUS_OPTIONS: EC2Status[] = ['running', 'stopped', 'stopping', 'pending', 'terminated', 'shutting-down'];
 
 function toTitleCase(s: string): string {
   return s.replace(/(^|-)(\w)/g, (_, _sep, c) => (_sep ? ' ' : '') + c.toUpperCase());
@@ -199,7 +197,7 @@ const InstancesPage = () => {
             className="bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-sm text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
           >
             <option value="all">All Statuses</option>
-            {STATUS_OPTIONS.map((s) => (
+            {EC2_STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>{toTitleCase(s)}</option>
             ))}
           </select>

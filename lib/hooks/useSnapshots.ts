@@ -2,31 +2,21 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Snapshot } from '@aws-sdk/client-ec2';
-
-async function fetchSnapshots(): Promise<Snapshot[]> {
-  const res = await fetch('/api/snapshots');
-  if (!res.ok) throw new Error('Failed to fetch snapshots');
-  return res.json();
-}
-
-async function fetchSnapshot(id: string): Promise<Snapshot | null> {
-  const res = await fetch(`/api/snapshots/${id}`);
-  if (!res.ok) throw new Error('Failed to fetch snapshot');
-  return res.json();
-}
+import { createQueryFn } from '@/lib/api/query';
+import { REFETCH_INTERVAL_DETAIL } from '@/lib/constants/status';
 
 export function useSnapshots() {
   return useQuery({
     queryKey: ['snapshots'],
-    queryFn: fetchSnapshots,
+    queryFn: createQueryFn<Snapshot[]>('/api/snapshots'),
   });
 }
 
 export function useSnapshot(id: string) {
   return useQuery({
     queryKey: ['snapshots', id],
-    queryFn: () => fetchSnapshot(id),
-    refetchInterval: 10_000,
+    queryFn: createQueryFn<Snapshot | null>(`/api/snapshots/${id}`),
+    refetchInterval: REFETCH_INTERVAL_DETAIL,
     enabled: !!id,
   });
 }

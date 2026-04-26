@@ -1,5 +1,7 @@
 'use client';
 
+import Button from '@/lib/ui/buttons/Button';
+import Modal from '@/lib/ui/modals/Modal';
 import SearchableDropdown, { Option } from '@/lib/ui/inputs/SearchableDropdown';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -74,48 +76,43 @@ const LinkSnapshotModal: React.FC<LinkSnapshotModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-gray-900 border border-gray-700 p-6 rounded-lg shadow-lg max-w-md w-full text-gray-100">
-        <h2 className="text-xl font-bold mb-4">
-          Link Snapshot to EC2 Instance
-        </h2>
-        <SearchableDropdown
-          options={ec2Instances}
-          onChange={setSelectedInstance}
-          placeholder="Select EC2 instance..."
+    <Modal isOpen={true} onClose={onClose}>
+      <h2 className="text-xl font-bold mb-4">
+        Link Snapshot to EC2 Instance
+      </h2>
+      <SearchableDropdown
+        options={ec2Instances}
+        onChange={setSelectedInstance}
+        placeholder="Select EC2 instance..."
+      />
+
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-400">
+          Snapshot Name
+        </label>
+        <input
+          type="text"
+          value={snapshotName}
+          onChange={(e) => setSnapshotName(e.target.value)}
+          className="form-input mt-1"
+          placeholder="Enter snapshot name..."
+          required
         />
-
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-400">
-            Snapshot Name
-          </label>
-          <input
-            type="text"
-            value={snapshotName}
-            onChange={(e) => setSnapshotName(e.target.value)}
-            className="form-input mt-1"
-            placeholder="Enter snapshot name..."
-            required
-          />
-        </div>
-
-        <div className="flex space-x-4 mt-4">
-          <button
-            onClick={handleLink}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg"
-            disabled={loading || !selectedInstance}
-          >
-            Link
-          </button>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-700 text-gray-100 rounded-lg hover:bg-gray-600 transition-colors"
-          >
-            Cancel
-          </button>
-        </div>
       </div>
-    </div>
+
+      <div className="flex space-x-4 mt-4">
+        <Button
+          onClick={handleLink}
+          variant="success"
+          disabled={loading || !selectedInstance}
+        >
+          Link
+        </Button>
+        <Button variant="secondary" onClick={onClose}>
+          Cancel
+        </Button>
+      </div>
+    </Modal>
   );
 };
 

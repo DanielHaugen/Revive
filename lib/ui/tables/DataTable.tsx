@@ -107,10 +107,10 @@ function DataTable<T>({
 
   return (
     <div
-      className={`bg-gray-900 border border-gray-800 rounded-lg overflow-hidden w-full ${className}`}
+      className={`surface-card overflow-hidden w-full ${className}`}
     >
       <table className="min-w-full table-auto border-collapse">
-        <thead className="bg-gray-800 border-b border-gray-700">
+        <thead className="table-header">
           <tr>
             {selectable && (
               <th className="px-3 py-3 w-10">

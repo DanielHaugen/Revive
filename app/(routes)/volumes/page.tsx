@@ -12,13 +12,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FaTrash, FaPlus, FaMagnifyingGlass } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
-import { VolumeState, mapVolumeStateToVariant } from '@/lib/constants/status';
+import { VolumeState, mapVolumeStateToVariant, VOLUME_STATUS_OPTIONS } from '@/lib/constants/status';
 import { useVolumes } from '@/lib/hooks/useVolumes';
 import { useQueryClient } from '@tanstack/react-query';
 import { TableSkeleton } from '@/lib/ui/feedback/Skeleton';
 import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
-
-const STATUS_OPTIONS: VolumeState[] = ['available', 'in-use', 'creating', 'deleting', 'deleted', 'error'];
 
 function toTitleCase(s: string): string {
   return s.replace(/(^|-)(\w)/g, (_, _sep, c) => (_sep ? ' ' : '') + c.toUpperCase());
@@ -221,7 +219,7 @@ const VolumesPage = () => {
             className="bg-gray-800 border border-gray-700 rounded-md py-2 px-3 text-sm text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
           >
             <option value="all">All Statuses</option>
-            {STATUS_OPTIONS.map((s) => (
+            {VOLUME_STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>{toTitleCase(s)}</option>
             ))}
           </select>

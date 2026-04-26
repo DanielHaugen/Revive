@@ -2,46 +2,23 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Playbook } from '@prisma/client';
-
-type PlaybookWithSteps = Playbook & {
-  steps: {
-    id: number;
-    type: string;
-    targets: {
-      id: number;
-      instanceId: string;
-      instanceName: string | null;
-      availabilityZone: string | null;
-      snapshotId: string | null;
-      snapshotName: string | null;
-    }[];
-  }[];
-};
-
-async function fetchPlaybooks(): Promise<Playbook[]> {
-  const res = await fetch('/api/playbooks');
-  if (!res.ok) throw new Error('Failed to fetch playbooks');
-  return res.json();
-}
-
-async function fetchPlaybook(id: number): Promise<PlaybookWithSteps | null> {
-  const res = await fetch(`/api/playbooks/${id}`);
-  if (!res.ok) throw new Error('Failed to fetch playbook');
-  const data = await res.json();
-  return data.playbook ?? null;
-}
+import { createQueryFn } from '@/lib/api/query';
+import type { PlaybookWithDetails } from '@/lib/types';
 
 export function usePlaybooks() {
   return useQuery({
     queryKey: ['playbooks'],
-    queryFn: fetchPlaybooks,
+    queryFn: createQueryFn<Playbook[]>('/api/playbooks'),
   });
 }
 
 export function usePlaybook(id: number) {
   return useQuery({
     queryKey: ['playbooks', id],
-    queryFn: () => fetchPlaybook(id),
+    queryFn: async () => {
+      const data = await createQueryFn<{ playbook: PlaybookWithDetails | null }>(`/api/playbooks/${id}`)();
+      return data.playbook ?? null;
+    },
     enabled: id > 0,
   });
 }

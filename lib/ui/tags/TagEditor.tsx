@@ -75,7 +75,7 @@ export default function TagEditor({ resourceId, endpoint, tags, onUpdate }: TagE
       {/* Existing tags */}
       {tags.length > 0 ? (
         <table className="min-w-full table-auto border-collapse">
-          <thead className="bg-gray-800 border-b border-gray-700">
+          <thead className="table-header">
             <tr>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-300">Key</th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-300">Value</th>
@@ -112,7 +112,7 @@ export default function TagEditor({ resourceId, endpoint, tags, onUpdate }: TagE
           placeholder="Key"
           value={newKey}
           onChange={(e) => setNewKey(e.target.value)}
-          className="flex-1 bg-gray-800 border border-gray-700 rounded-md py-1.5 px-3 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          className="flex-1 form-input-sm"
           onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
         />
         <input
@@ -120,7 +120,7 @@ export default function TagEditor({ resourceId, endpoint, tags, onUpdate }: TagE
           placeholder="Value"
           value={newValue}
           onChange={(e) => setNewValue(e.target.value)}
-          className="flex-1 bg-gray-800 border border-gray-700 rounded-md py-1.5 px-3 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          className="flex-1 form-input-sm"
           onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
         />
         <Button

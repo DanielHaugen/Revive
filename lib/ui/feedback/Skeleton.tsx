@@ -24,9 +24,9 @@ type TableSkeletonProps = {
 /** Skeleton matching the DataTable layout. */
 export function TableSkeleton({ rows = 5, columns = 4 }: TableSkeletonProps) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+    <div className="surface-card overflow-hidden">
       {/* Header row */}
-      <div className="bg-gray-800 border-b border-gray-700 flex gap-4 px-6 py-3">
+      <div className="table-header flex gap-4 px-6 py-3">
         {Array.from({ length: columns }).map((_, i) => (
           <Skeleton key={i} className="h-4 flex-1" />
         ))}
@@ -49,7 +49,7 @@ export function TableSkeleton({ rows = 5, columns = 4 }: TableSkeletonProps) {
 /** Skeleton matching the Card + InfoSection detail layout. */
 export function DetailSkeleton() {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg shadow-lg p-8 space-y-8">
+    <div className="surface-card p-8 space-y-8">
       {/* Title */}
       <Skeleton className="h-6 w-1/3" />
       {/* Field grid */}

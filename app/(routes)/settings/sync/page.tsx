@@ -5,12 +5,13 @@ import Card from '@/lib/ui/card/Card';
 import Button from '@/lib/ui/buttons/Button';
 import { toast } from 'react-toastify';
 import { useSyncConfig, useUpdateSyncConfig } from '@/lib/hooks/useSync';
+import ErrorBanner from '@/lib/ui/feedback/ErrorBanner';
 
 const MIN_INTERVAL = 10;
 const MAX_INTERVAL = 3600;
 
 const SyncSettingsPage = () => {
-  const { data: config, isLoading } = useSyncConfig();
+  const { data: config, isLoading, error } = useSyncConfig();
   const { mutateAsync: updateConfig, isPending } = useUpdateSyncConfig();
 
   const [enabled, setEnabled] = useState(true);
@@ -39,6 +40,15 @@ const SyncSettingsPage = () => {
 
   if (isLoading) {
     return <div className="text-gray-400 text-sm">Loading…</div>;
+  }
+
+  if (error) {
+    return (
+      <ErrorBanner
+        title="Failed to load sync settings"
+        message={error.message}
+      />
+    );
   }
 
   return (
